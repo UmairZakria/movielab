@@ -95,7 +95,7 @@ const Reviews = ({ movieId, type = "movie" }) => {
       stars.push(
         <Star
           key={`full-${i}`}
-          className="w-4 h-4 text-yellow-400 fill-current"
+          className="w-[0.8vw] h-[0.8vw] text-yellow-400 fill-current"
         />,
       );
     }
@@ -103,10 +103,10 @@ const Reviews = ({ movieId, type = "movie" }) => {
     // Half star (using a smaller filled star)
     if (hasHalfStar) {
       stars.push(
-        <div key="half" className="relative w-4 h-4">
-          <Star className="w-4 h-4 text-gray-600 fill-current absolute" />
+        <div key="half" className="relatve w-[0.8vw] h-[0.8vw]">
+          <Star className="w-[0.8vw] h-[0.8vw] text-gray-600 fill-current absolute" />
           <Star
-            className="w-4 h-4 text-yellow-400 fill-current absolute"
+            className="w-[0.8vw] h-[0.8vw] text-yellow-400 fill-current absolute"
             style={{ clipPath: "inset(0 50% 0 0)" }}
           />
         </div>,
@@ -130,7 +130,7 @@ const Reviews = ({ movieId, type = "movie" }) => {
   if (loading) {
     return (
       <div className="space-y-4">
-        <h3 className="text-xl font-semibold text-white mb-4">User Reviews</h3>
+        <h3 className="text-xl font-semibold text-white mb-4">Reviews</h3>
         {[1, 2, 3].map((i) => (
           <div key={i} className="bg-zinc-900 rounded-lg p-4 animate-pulse">
             <div className="flex items-start gap-3 mb-3">
@@ -222,7 +222,7 @@ const Reviews = ({ movieId, type = "movie" }) => {
             </div>
             <div className="text-right">
               {review.author_details?.rating && (
-                <div className="mb-1">
+                <div className="mb-1 ">
                   {renderStars(review.author_details.rating)}
                 </div>
               )}
@@ -236,7 +236,7 @@ const Reviews = ({ movieId, type = "movie" }) => {
 
       <div className="text-zinc-300 text-sm md:text-lg leading-relaxed w-full lg:w-[85%]">
         {/* {review.content.split('\n').map((paragraph, index) => ( */}
-        <p className="mb-3 line-clamp-4 md:line-clamp-6 ">
+        <p className="mb-3 line-clamp-4 md:line-clamp-3 ">
           {/* {paragraph || '\u00A0'} */}
           {review.content}
         </p>
@@ -251,7 +251,7 @@ const Reviews = ({ movieId, type = "movie" }) => {
             rel="noopener noreferrer"
             className="text-primary hover:text-primary/80 text-sm font-medium inline-flex items-center gap-1"
           >
-            Read full review 
+            Read full review
             <svg
               className="w-4 h-4"
               fill="none"
@@ -274,11 +274,11 @@ const Reviews = ({ movieId, type = "movie" }) => {
   return (
     <div className="space-y-6 pt-[3vw] font-poppins">
       <h3 className="text-2xl font-semibold text-white mb-4">
-        User Reviews ({reviews.length})
+         Reviews ({reviews.length})
       </h3>
 
       {/* Mobile Slider View */}
-      <div className="block md:hidden">
+      <div className="block lg:hidden">
         <Slider {...sliderSettings}>
           {reviews.map((review) => (
             <div key={review.id} className="px-2">
@@ -289,7 +289,7 @@ const Reviews = ({ movieId, type = "movie" }) => {
       </div>
 
       {/* Desktop Grid View */}
-      <div className="hidden md:block space-y-[3vw]">
+      <div className="hidden lg:block space-y-[3vw]">
         {reviews.map((review) => renderReviewCard(review))}
       </div>
 

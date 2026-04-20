@@ -3,6 +3,7 @@ import React from "react";
 import { Plus, Check, Play } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
+import { trackEvent, G_EVENTS } from "../utils/analytics";
 
 const HoverOverlay = ({
   movie,
@@ -42,19 +43,31 @@ const HoverOverlay = ({
             href={`/movie/${createSlug(
               movie.title || movie.name,
               movie.id,
-              mediaType,
+              movie.media_type || mediaType,
             )}`}
+            onClick={() =>
+              trackEvent(G_EVENTS.TRAILER, {
+                event_category: "engagement",
+                event_label: movie.title || movie.name,
+              })
+            }
             className="bg-white/90 cursor-pointer text-black text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1 hover:bg-white transition-colors"
           >
             {/* <Play size={14} fill="black" /> */}
             Trailer
           </Link>
           <Link
-            href={`/${mediaType === "tv" ? "watch" : "watch"}/${createSlug(
+            href={`/watch/${createSlug(
               movie.title || movie.name,
               movie.id,
-              mediaType,
+              movie.media_type || mediaType,
             )}`}
+            onClick={() =>
+              trackEvent(G_EVENTS.WATCH_NOW, {
+                event_category: "conversion",
+                event_label: movie.title || movie.name,
+              })
+            }
             rel="nofollow"
             className="bg-white/90 cursor-pointer text-black text-xs font-bold px-3 py-1.5 rounded-full flex items-center gap-1 hover:bg-white transition-colors"
           >

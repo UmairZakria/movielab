@@ -32,26 +32,7 @@ const MovieRow = ({
     async function fetchData() {
       try {
         const request = await axios.get(fetchURL);
-        const unsafeKeywords = [
-          "sexy",
-          "erotic",
-          "porn",
-          "xxx",
-          "nude",
-          "breast",
-          "sex",
-          "18+",
-        ];
-        const safeResults = request.data.results.filter((item) => {
-          const title = (item.title || item.name || "").toLowerCase();
-          const overview = (item.overview || "").toLowerCase();
-          const isAdult = item.adult;
-          const hasUnsafeKeyword = unsafeKeywords.some(
-            (keyword) => title.includes(keyword) || overview.includes(keyword),
-          );
-          return !isAdult && !hasUnsafeKeyword;
-        });
-        setMovies(safeResults);
+        setMovies(request.data.results);
         setLoading(false);
       } catch (error) {
         console.error("Error fetching movies:", error);
@@ -131,7 +112,7 @@ const MovieRow = ({
                 <div
                   onClick={() => router.push(`/movie/${movieSlug}`)}
                   key={movie.id}
-                  className="w-[45vw] lg:w-[16vw] group cursor-pointer shrink-0 relative transition-transform duration-300 z-0 hover:z-50 hover:scale-110"
+                  className="w-[45vw] md:w-[30vw] lg:w-[16vw] group cursor-pointer shrink-0 relative transition-transform duration-300 z-0 hover:z-50 hover:scale-110"
                 >
                   {/* Image Container */}
                   <div className="relative w-full aspect-3/4 rounded-lg overflow-hidden shadow-lg">
