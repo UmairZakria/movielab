@@ -45,10 +45,11 @@ const ActorContent = ({ data, slug }) => {
         if (!id) return;
         try {
           setLoading(true);
-          const res = await axios.get(
+          const res = await fetch(
             `${BASE_URL}/person/${id}?api_key=${API_KEY}&append_to_response=combined_credits,images,external_ids`,
           );
-          setActor(res.data);
+          const responseData = await res.json();
+          setActor(responseData);
           setLoading(false);
         } catch (error) {
           console.error("Error fetching actor details:", error);
@@ -57,7 +58,7 @@ const ActorContent = ({ data, slug }) => {
       }
     };
     fetchActorData();
-  }, [id, data, slug, API_KEY, BASE_URL]);
+  }, [data, slug, API_KEY, BASE_URL]);
 
   // Derived Values from Actor State
   const rawCast = actor?.combined_credits?.cast || [];
@@ -253,7 +254,7 @@ const ActorContent = ({ data, slug }) => {
                 transition={{ delay: 0.2 }}
               >
                 <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 mb-3">
-                  <span className="px-4 py-1.5 bg-primary text-black text-[11px] font-black uppercase rounded-lg shadow-lg shadow-primary/20">
+                  <span className="px-4 py-1.5 bg-primary text-black text-[11px] font-poppins uppercase rounded-lg shadow-lg shadow-primary/20">
                     {actor.known_for_department}
                   </span>
                   {actor.birthday && (
@@ -273,7 +274,7 @@ const ActorContent = ({ data, slug }) => {
                     </span>
                   )}
                 </div>
-                <h1 className="text-5xl lg:text-8xl font-comfortaa font-bold mb-8 tracking-tighter">
+                <h1 className="text-5xl lg:text-8xl font-poppins  mb-8 ">
                   {actor.name}
                 </h1>
 
