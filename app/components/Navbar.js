@@ -14,7 +14,6 @@ import {
 // Using standard img tag for direct TMDB asset loading & reliability
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
 import { AnimatePresence, motion } from "framer-motion";
 import axios from "axios";
 import Marquee from "react-fast-marquee";
@@ -38,7 +37,6 @@ const Navbar = () => {
   const BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
 
   // Placeholder Animation Logic
-  const { user, logout, isLoginModalOpen, setIsLoginModalOpen } = useAuth();
   const [currentPhraseIndex, setCurrentPhraseIndex] = useState(0);
 
   useEffect(() => {

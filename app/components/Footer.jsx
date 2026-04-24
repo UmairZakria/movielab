@@ -11,32 +11,20 @@ const Footer = () => {
   const [status, setStatus] = useState(null);
   const [showExplore, setShowExplore] = useState(false);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!name || !message)
       return setStatus({ error: "Please fill both fields" });
+    
+    // Since API is removed, we just show a success message locally
     setLoading(true);
-    setStatus(null);
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email, message }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        setStatus({ success: "Message Sended — thank you!" });
-        setName("");
-        setEmail("");
-        setMessage("");
-      } else {
-        setStatus({ error: data?.error || "Failed to Sended Try Again Later" });
-      }
-    } catch (err) {
-      setStatus({ error: "Server error" });
-    } finally {
+    setTimeout(() => {
+      setStatus({ success: "Message received (Local Only) — thank you!" });
+      setName("");
+      setEmail("");
+      setMessage("");
       setLoading(false);
-    }
+    }, 500);
   };
 
   return (

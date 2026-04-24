@@ -296,7 +296,7 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
     { name: "Server 2", value: "https://multiembed.mov/", id: "multiembed" },
     { name: "Server 3", value: "https://vidsrc.me/embed", id: "vidsrc_me" },
     { name: "Server 4", value: "https://vidsrc.cc/v2/embed", id: "vidsrc_cc" },
-    { name: "Server 5", value: "https://www.vidking.net", id: "server5" },
+    // { name: "Server 5", value: "https://www.vidking.net", id: "server5" },
   ];
   const [selectedServer, setSelectedServer] = useState(providers[0]);
   const iframeRef = useRef(null);
@@ -328,7 +328,7 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
     return () => window.removeEventListener("click", handleClickOutside);
   }, []);
 
-  const { toggleWatchLater, watchLater, user } = useAuth();
+  const { toggleWatchLater, watchLater } = useAuth();
   const isSaved = watchLater.some((item) => item.id === id);
 
   const recObserverRef = useRef();

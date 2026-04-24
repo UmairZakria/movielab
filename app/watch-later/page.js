@@ -6,8 +6,7 @@ import Link from "next/link";
 import { Play, X } from "lucide-react";
 
 export default function WatchLaterPage() {
-  const { user, watchLater, loading, toggleWatchLater ,setIsLoginModalOpen} = useAuth();
-    // const { user, logout, isLoginModalOpen, setIsLoginModalOpen } = useAuth();
+  const { watchLater, loading, toggleWatchLater } = useAuth();
   
   const [mounted, setMounted] = useState(false);
 
@@ -30,27 +29,6 @@ export default function WatchLaterPage() {
         <Navbar />
         <div className="flex items-center justify-center h-screen">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary"></div>
-        </div>
-      </main>
-    );
-  }
-
-  if (!user) {
-    return (
-      <main className="min-h-screen bg-black text-white">
-        <Navbar />
-        <div className="flex flex-col items-center justify-center h-[80vh] px-4 text-center">
-          <h1 className="text-3xl md:text-5xl font-bold font-comfortaa mb-6">
-            Sign In to Access Your List
-          </h1>
-          <p className="text-zinc-400 mb-8 max-w-md">
-            Save movies and shows to watch later. Use your username to sync
-            across devices.
-          </p>
-          <button onClick={() => setIsLoginModalOpen(true)} className="text-primary mt-4 inline-block hover:underline">
-            Sign In
-          </button>
-          {/* Note: In a real app we'd have a trigger here, but Navbar has the login button */}
         </div>
       </main>
     );

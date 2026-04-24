@@ -2,7 +2,6 @@ import { Poppins, Comfortaa } from "next/font/google";
 import GoogleAnalytics from "./components/GoogleAnalytics";
 import MicrosoftClarity from "./components/MicrosoftClarity";
 import { AuthProvider } from "../context/AuthContext";
-import { AdminProvider } from "../context/AdminContext";
 import SmoothScrollProvider from "./components/SmoothScrollProvider";
 import PageTransition from "./components/PageTransition";
 import Script from "next/script";
@@ -160,13 +159,11 @@ export default function RootLayout({ children }) {
         <Script src="https://pl28735344.profitablecpmratenetwork.com/59/57/4a/59574a153ab37dd51e9c1fc6d4347223.js" />
         <Script async data-cfasync="false" src="https://pl28967245.profitablecpmratenetwork.com/057ba296e4201c8828400ac32a6e5d39/invoke.js" />  */}
 
-        <AdminProvider>
-          <AuthProvider>
-            <SmoothScrollProvider>
-              <PageTransition>{children}</PageTransition>
-            </SmoothScrollProvider>
-          </AuthProvider>
-        </AdminProvider>
+        <AuthProvider>
+          <SmoothScrollProvider>
+            <PageTransition>{children}</PageTransition>
+          </SmoothScrollProvider>
+        </AuthProvider>
       </body>
     </html>
   );

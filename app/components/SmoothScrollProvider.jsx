@@ -6,9 +6,6 @@ import { usePathname } from "next/navigation";
 const CustomScrollbar = dynamic(() => import("./CustomScrollbar"), {
   ssr: false,
 });
-const LoginModal = dynamic(() => import("@/components/LoginModal"), {
-  ssr: false,
-});
 
 const SmoothScrollProvider = ({ children }) => {
   const pathname = usePathname();
@@ -156,7 +153,6 @@ const SmoothScrollProvider = ({ children }) => {
     <>
       <CustomScrollbar />
       {children}
-      <LoginModal />
     </>
   );
 };
