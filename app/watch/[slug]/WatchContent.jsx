@@ -309,6 +309,7 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
   const [episodes, setEpisodes] = useState([]);
   const [selectedEpisode, setSelectedEpisode] = useState(1);
   const [loadingTV, setLoadingTV] = useState(false);
+  const isRestored = useRef(false);
 
   // Sidebar States
   const [recommendations, setRecommendations] = useState([]);
@@ -378,10 +379,33 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
   useEffect(() => {
     if (mediaType === "tv" && movie) {
       setSeasons(movie.seasons || []);
-      // Auto-fetch episodes for Season 1
-      fetchEpisodes(1);
+      
+      let targetSeason = 1;
+      const savedResume = localStorage.getItem(`movielab_resume_${id}`);
+      if (savedResume) {
+        try {
+          const { season, episode } = JSON.parse(savedResume);
+          if (season) {
+            targetSeason = season;
+            setSelectedSeason(season);
+            setSelectedEpisode(episode);
+          }
+        } catch (e) {
+          console.error("Error parsing resume state", e);
+        }
+      } else {
+        setSelectedSeason(1);
+        setSelectedEpisode(1);
+      }
+      
+      // Auto-fetch episodes for the target season
+      fetchEpisodes(targetSeason);
+      
+      setTimeout(() => {
+        isRestored.current = true;
+      }, 500);
     }
-  }, [movie, mediaType]);
+  }, [movie, mediaType, id]);
 
   const fetchEpisodes = async (seasonNum) => {
     try {
@@ -474,6 +498,28 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
     score += (item.vote_average || 0) * 2;
     score += Math.min((item.popularity || 0) / 100, 10);
 
+    // 6. Release Year Proximity
+    const currentYearStr = currentMovie.release_date || currentMovie.first_air_date;
+    const itemYearStr = item.release_date || item.first_air_date;
+    
+    if (currentYearStr && itemYearStr) {
+      const currentYear = parseInt(currentYearStr.split('-')[0]);
+      const itemYear = parseInt(itemYearStr.split('-')[0]);
+      const yearDiff = Math.abs(currentYear - itemYear);
+      
+      if (yearDiff <= 2) {
+        score += 15; // Highly relevant era
+      } else if (yearDiff <= 5) {
+        score += 10; // Similar era
+      } else if (yearDiff <= 10) {
+        score += 5; // Somewhat similar
+      } else if (yearDiff > 20) {
+        score -= 30; // Too old/new compared to current
+      } else if (yearDiff > 30) {
+        score -= 50; // Vastly different era, highly irrelevant
+      }
+    }
+
     return score;
   };
 
@@ -490,21 +536,30 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
       const leadingActorId = movie?.credits?.cast?.[0]?.id;
       const firstKeywordId = movie?.keywords?.keywords?.[0]?.id;
 
+      let dateFilter = "";
+      const currentYearStr = movie?.release_date || movie?.first_air_date;
+      if (currentYearStr && activeTab !== "actor" && activeTab !== "related") {
+        const currentYear = parseInt(currentYearStr.split('-')[0]);
+        const dateGte = mediaType === "tv" ? "first_air_date.gte" : "primary_release_date.gte";
+        const dateLte = mediaType === "tv" ? "first_air_date.lte" : "primary_release_date.lte";
+        dateFilter = `&${dateGte}=${currentYear - 5}-01-01&${dateLte}=${currentYear + 5}-12-31`;
+      }
+
       switch (activeTab) {
         case "related":
           endpoint = `${BASE_URL}/${mediaType}/${id}/similar?api_key=${API_KEY}&page=${pageNum}`;
           break;
         case "genre":
-          endpoint = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_genres=${primaryGenreId}&page=${pageNum}&sort_by=popularity.desc`;
+          endpoint = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_genres=${primaryGenreId}&page=${pageNum}&sort_by=popularity.desc${dateFilter}`;
           break;
         case "studio":
-          endpoint = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_companies=${primaryStudioId}&page=${pageNum}&sort_by=popularity.desc`;
+          endpoint = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_companies=${primaryStudioId}&page=${pageNum}&sort_by=popularity.desc${dateFilter}`;
           break;
         case "actor":
           endpoint = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_cast=${leadingActorId}&page=${pageNum}&sort_by=popularity.desc`;
           break;
         case "topic":
-          endpoint = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_keywords=${firstKeywordId}&page=${pageNum}&sort_by=popularity.desc`;
+          endpoint = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_keywords=${firstKeywordId}&page=${pageNum}&sort_by=popularity.desc${dateFilter}`;
           break;
         default: // 'all' tab
           // 1. If page 1 and we have recommendations in movie metadata, use them
@@ -532,11 +587,11 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
               .join("|");
 
             // Use discover with Genre + Keyword OR match
-            endpoint = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_genres=${genreIds}&with_keywords=${keywordIds}&vote_count.gte=50&page=${pageNum}&sort_by=popularity.desc`;
+            endpoint = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_genres=${genreIds}&with_keywords=${keywordIds}&vote_count.gte=50&page=${pageNum}&sort_by=popularity.desc${dateFilter}`;
 
             // If still no results or first page of fallback, try broader discover
             if (!keywordIds || pageNum > 1) {
-              endpoint = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_genres=${genreIds}&vote_count.gte=100&page=${pageNum}&sort_by=popularity.desc`;
+              endpoint = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_genres=${genreIds}&vote_count.gte=100&page=${pageNum}&sort_by=popularity.desc${dateFilter}`;
             }
           } else {
             // Try Recommendations first, then Similar
@@ -684,31 +739,16 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
     }
   };
 
-  // Episode Resume Logic
-  useEffect(() => {
-    if (mediaType === "tv" && id) {
-      const savedResume = localStorage.getItem(`movielab_resume_${id}`);
-      if (savedResume) {
-        try {
-          const { season, episode } = JSON.parse(savedResume);
-          setSelectedSeason(season);
-          setSelectedEpisode(episode);
-          fetchEpisodes(season);
-        } catch (e) {
-          console.error("Error parsing resume state", e);
-        }
-      }
-    }
-  }, [id, mediaType]);
+
 
   useEffect(() => {
-    if (mediaType === "tv" && id && !loading) {
+    if (mediaType === "tv" && id && isRestored.current) {
       localStorage.setItem(
         `movielab_resume_${id}`,
         JSON.stringify({ season: selectedSeason, episode: selectedEpisode }),
       );
     }
-  }, [id, mediaType, selectedSeason, selectedEpisode, loading]);
+  }, [id, mediaType, selectedSeason, selectedEpisode]);
 
   // History Tracking Logic
   useEffect(() => {

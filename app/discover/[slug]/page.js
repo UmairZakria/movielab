@@ -24,7 +24,7 @@ async function getDiscoveryData(slug, page = 1, year = "", type = "all") {
   // Helper to fetch single type
   const fetchSingle = async (mType, p) => {
     const sortBy = mType === "tv" ? "first_air_date.desc" : "primary_release_date.desc";
-    const commonFilters = `&include_adult=true&vote_count.gte=10`;
+    const commonFilters = `&include_adult=false&vote_count.gte=10`;
     const yearParam = mType === "tv" ? "first_air_date_year" : "primary_release_year";
     const yearFilter = year ? `&${yearParam}=${year}` : "";
     const baseParams = `&page=${p}&sort_by=${sortBy}${commonFilters}${yearFilter}`;

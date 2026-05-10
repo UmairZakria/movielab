@@ -73,8 +73,8 @@ const SearchContent = ({ query }) => {
         let endpoints = [];
 
         // Define base params based on filter type
-        const movieBase = `${BASE_URL}/discover/movie?api_key=${API_KEY}&include_adult=true&sort_by=primary_release_date.desc&vote_count.gte=10&page=${pageNum}`;
-        const tvBase = `${BASE_URL}/discover/tv?api_key=${API_KEY}&include_adult=true&sort_by=first_air_date.desc&vote_count.gte=10&page=${pageNum}`;
+        const movieBase = `${BASE_URL}/discover/movie?api_key=${API_KEY}&include_adult=false&sort_by=primary_release_date.desc&vote_count.gte=10&page=${pageNum}`;
+        const tvBase = `${BASE_URL}/discover/tv?api_key=${API_KEY}&include_adult=false&sort_by=first_air_date.desc&vote_count.gte=10&page=${pageNum}`;
 
         let movieQuery = "";
         let tvQuery = "";
@@ -132,7 +132,7 @@ const SearchContent = ({ query }) => {
         if (isInitial) {
           // Fetch up to 3 pages horizontally to build a good chunk without pagination-shuffle
           const pageReqs = [1, 2, 3].map(p =>
-            axios.get(`${BASE_URL}/search/multi?api_key=${API_KEY}&query=${decodedQuery}&include_adult=true&page=${p}`).catch(() => null)
+            axios.get(`${BASE_URL}/search/multi?api_key=${API_KEY}&query=${decodedQuery}&include_adult=false&page=${p}`).catch(() => null)
           );
           const responses = await Promise.all(pageReqs);
           

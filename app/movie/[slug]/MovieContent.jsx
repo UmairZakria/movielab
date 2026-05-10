@@ -142,25 +142,34 @@ const MovieContent = ({ initialData, slug, id, mediaType = "movie" }) => {
       const leadingActorId = movie?.credits?.cast?.[0]?.id;
       const firstKeywordId = movie?.keywords?.keywords?.[0]?.id;
 
+      let dateFilter = "";
+      const currentYearStr = movie?.release_date || movie?.first_air_date;
+      if (currentYearStr && activeTab !== "actor" && activeTab !== "related") {
+        const currentYear = parseInt(currentYearStr.split('-')[0]);
+        const dateGte = mediaType === "tv" ? "first_air_date.gte" : "primary_release_date.gte";
+        const dateLte = mediaType === "tv" ? "first_air_date.lte" : "primary_release_date.lte";
+        dateFilter = `&${dateGte}=${currentYear - 5}-01-01&${dateLte}=${currentYear + 5}-12-31`;
+      }
+
       switch (activeTab) {
         case "related":
           endpoint = `${BASE_URL}/${mediaType}/${id}/similar?api_key=${API_KEY}&page=${pageNum}`;
           break;
         case "genre":
-          endpoint = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_genres=${primaryGenreId}&page=${pageNum}&sort_by=popularity.desc`;
+          endpoint = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_genres=${primaryGenreId}&page=${pageNum}&sort_by=popularity.desc${dateFilter}`;
           break;
         case "studio":
-          endpoint = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_companies=${primaryStudioId}&page=${pageNum}&sort_by=popularity.desc`;
+          endpoint = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_companies=${primaryStudioId}&page=${pageNum}&sort_by=popularity.desc${dateFilter}`;
           break;
         case "actor":
           endpoint = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_cast=${leadingActorId}&page=${pageNum}&sort_by=popularity.desc`;
           break;
         case "topic":
-          endpoint = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_keywords=${firstKeywordId}&page=${pageNum}&sort_by=popularity.desc`;
+          endpoint = `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&with_keywords=${firstKeywordId}&page=${pageNum}&sort_by=popularity.desc${dateFilter}`;
           break;
         default:
           endpoint = isFallbackMode
-            ? `${BASE_URL}/${mediaType}/popular?api_key=${API_KEY}&page=${pageNum}`
+            ? `${BASE_URL}/discover/${mediaType}?api_key=${API_KEY}&sort_by=popularity.desc&page=${pageNum}${dateFilter}`
             : `${BASE_URL}/${mediaType}/${id}/recommendations?api_key=${API_KEY}&page=${pageNum}`;
       }
 

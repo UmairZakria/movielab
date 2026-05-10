@@ -68,7 +68,7 @@ const DiscoverContent = ({
 
       const fetchType = async (mType) => {
         const sortBy = mType === "tv" ? "first_air_date.desc" : "primary_release_date.desc";
-        const commonFilters = `&include_adult=true&vote_count.gte=10`;
+        const commonFilters = `&include_adult=false&vote_count.gte=10`;
         const yearParam = mType === "tv" ? "first_air_date_year" : "primary_release_year";
         const yearFilter = currentYear ? `&${yearParam}=${currentYear}` : "";
         const baseParams = `&page=${pageNum}&sort_by=${sortBy}${commonFilters}${yearFilter}`;

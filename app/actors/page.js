@@ -143,14 +143,14 @@ const ActorsPage = () => {
       // Deep fetch to find high-quality content across 10+ pages for a rich pool
       // Fetching first 5 pages of popular actors immediately to provide a stable, large sorted batch
       const pagePromises = [1, 2, 3, 4, 5].map(p =>
-        axios.get(`${BASE_URL}/person/popular?api_key=${API_KEY}&include_adult=true&page=${p}`)
+        axios.get(`${BASE_URL}/person/popular?api_key=${API_KEY}&include_adult=false&page=${p}`)
       );
       const [t1, t2, t3, ...pResponses] = await Promise.all([
-        axios.get(`${BASE_URL}/trending/person/week?api_key=${API_KEY}&include_adult=true&page=1`),
-        axios.get(`${BASE_URL}/trending/person/week?api_key=${API_KEY}&include_adult=true&page=2`),
-        axios.get(`${BASE_URL}/trending/person/week?api_key=${API_KEY}&include_adult=true&page=3`),
+        axios.get(`${BASE_URL}/trending/person/week?api_key=${API_KEY}&include_adult=false&page=1`),
+        axios.get(`${BASE_URL}/trending/person/week?api_key=${API_KEY}&include_adult=false&page=2`),
+        axios.get(`${BASE_URL}/trending/person/week?api_key=${API_KEY}&include_adult=false&page=3`),
         ...pagePromises,
-        axios.get(`${BASE_URL}/trending/person/day?api_key=${API_KEY}&include_adult=true&page=1`),
+        axios.get(`${BASE_URL}/trending/person/day?api_key=${API_KEY}&include_adult=false&page=1`),
       ]);
 
       const td1 = pResponses.pop(); // The last trending day response
@@ -223,7 +223,7 @@ const ActorsPage = () => {
     try {
       const nextPage = page + 1;
       const res = await axios.get(
-        `${BASE_URL}/person/popular?api_key=${API_KEY}&include_adult=true&page=${nextPage}`,
+        `${BASE_URL}/person/popular?api_key=${API_KEY}&include_adult=false&page=${nextPage}`,
       );
       const fetchedItems = res.data.results || [];
       const newItems = fetchedItems.filter(a =>
@@ -274,7 +274,7 @@ const ActorsPage = () => {
       try {
         setIsSearching(true);
         const res = await axios.get(
-          `${BASE_URL}/search/person?api_key=${API_KEY}&include_adult=true&query=${encodeURIComponent(searchQuery)}`
+          `${BASE_URL}/search/person?api_key=${API_KEY}&include_adult=false&query=${encodeURIComponent(searchQuery)}`
         );
         
         // Apply strict filters to search results

@@ -72,7 +72,7 @@ const Footer = () => {
             </Link>
           </div>
         </div>
-
+{/* 
         <form
           onSubmit={handleSubmit}
           className="w-full md:w-1/2 lg:w-1/3  bg-zinc-900 border border-white/5 p-4 rounded-lg"
@@ -122,7 +122,7 @@ const Footer = () => {
               <span className="text-red-400">{status.error}</span>
             )}
           </div>
-        </form>
+        </form> */}
       </div>
     </footer>
   );

@@ -48,9 +48,9 @@ const Navbar = () => {
 
   const phrases = [
     "Search movies...",
+    "Explore genres...",
     "Search by actor...",
     "Search web series...",
-    "Explore genres...",
   ];
 
   useEffect(() => {
@@ -86,7 +86,7 @@ const Navbar = () => {
           const response = await axios.get(
             `${BASE_URL}/search/multi?api_key=${API_KEY}&query=${encodeURIComponent(
               searchQuery,
-            )}&include_adult=true`,
+            )}&include_adult=false`,
           );
 
           let results = response.data.results
@@ -236,13 +236,13 @@ const Navbar = () => {
                   >
                     {hubs[3].name}
                   </Link>
-                  <Link
+                  {/* <Link
                     href={`/discover/${hubs[2].slug}`}
                     // onClick={() => setIsSidebarOpen(false)}
                     className=" font-poppins   px-[0.8vw]  py-[0.4vw] rounded-full text-center hover:bg-primary hover:border-primary transition-all text-sm"
                   >
                     {hubs[2].name}
-                  </Link>
+                  </Link> */}
                   <Link
                     href="/actors"
                     onClick={() => setIsSidebarOpen(false)}
@@ -253,6 +253,15 @@ const Navbar = () => {
                     </span>
                     <span className="text-gray-700 group-hover:text-primary transition-colors">
                       {/* <ChevronRight /> */}
+                    </span>
+                  </Link>
+                  <Link
+                    href="/studios"
+                    onClick={() => setIsSidebarOpen(false)}
+                    className="px-[0.8vw]  py-[0.4vw] rounded-full hover:bg-primary flex items-center justify-between group transition-all"
+                  >
+                    <span className="text-white  transition-all font-medium">
+                      Studios
                     </span>
                   </Link>
                   <Link
@@ -499,6 +508,18 @@ const Navbar = () => {
                     >
                       <span className="text-white group-hover:text-primary  transition-all font-medium">
                         Browse By Actors
+                      </span>
+                      <span className="text-white group-hover:text-primary transition-colors">
+                        <ChevronRight />
+                      </span>
+                    </Link>
+                    <Link
+                      href="/studios"
+                      onClick={() => setIsSidebarOpen(false)}
+                      className="px-4 py-3 rounded-xl hover:bg-white/5 flex items-center justify-between group transition-all"
+                    >
+                      <span className="text-white group-hover:text-primary  transition-all font-medium">
+                        Browse Studios
                       </span>
                       <span className="text-white group-hover:text-primary transition-colors">
                         <ChevronRight />

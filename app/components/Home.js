@@ -53,7 +53,7 @@ const Home = ({ initialData = {} }) => {
         try {
           // Fetch trending movies first
           const trendingRes = await axios.get(
-            `${BASE_URL}/trending/movie/day?api_key=${API_KEY}&include_adult=true`,
+            `${BASE_URL}/trending/movie/day?api_key=${API_KEY}&include_adult=false`,
           );
           const topMovies = (trendingRes.data.results || []).slice(0, 6);
 
@@ -227,7 +227,7 @@ const Home = ({ initialData = {} }) => {
           isPriority={true}
           rowKey="trendingToday"
           title="Streamers of the day"
-          url={`${BASE_URL}/trending/movie/day?api_key=${API_KEY}&include_adult=true`}
+          url={`${BASE_URL}/trending/movie/day?api_key=${API_KEY}&include_adult=false`}
           viewAllLink="/discover/trending"
         />
         <LazyMovieRow
@@ -235,7 +235,7 @@ const Home = ({ initialData = {} }) => {
           isPriority={true}
           rowKey="horrorMovies"
           title="Horror Movies"
-          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=27&sort_by=popularity.desc&include_adult=true`}
+          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=27&sort_by=popularity.desc&include_adult=false`}
           viewAllLink="/discover/horror-27"
         />
         <LazyMovieRow
@@ -243,81 +243,81 @@ const Home = ({ initialData = {} }) => {
           isPriority={true}
           rowKey="sciFiMovies"
           title="Sci-Fi Movies"
-          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=878&sort_by=popularity.desc&include_adult=true`}
+          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=878&sort_by=popularity.desc&include_adult=false`}
           viewAllLink="/discover/sci-fi-878"
         />
 
         <LazyMovieRow
           rowKey="movies2024"
           title="Best of 2024"
-          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&primary_release_year=2024&sort_by=popularity.desc&include_adult=true`}
+          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&primary_release_year=2024&sort_by=popularity.desc&include_adult=false`}
           viewAllLink="/discover/new-releases"
         />
         <LazyMovieRow
           rowKey="movies2025"
           title="Top of 2025"
-          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&primary_release_year=2025&sort_by=popularity.desc&include_adult=true`}
+          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&primary_release_year=2025&sort_by=popularity.desc&include_adult=false`}
           viewAllLink="/discover/new-releases"
         />
         {/* <LazyMovieRow
           rowKey="movies2026"
           title="Upcoming 2026"
-          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&primary_release_year=2026&sort_by=popularity.desc&include_adult=true`}
+          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&primary_release_year=2026&sort_by=popularity.desc&include_adult=false`}
           viewAllLink="/discover/new-releases"
         /> */}
 
         <LazyMovieRow
           rowKey="actionMovies"
           title="Action Movies"
-          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=28&sort_by=popularity.desc&include_adult=true`}
+          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=28&sort_by=popularity.desc&include_adult=false`}
           viewAllLink="/discover/action-28"
         />
         <LazyMovieRow
           rowKey="topRated"
           title="Top Rated Movies"
-          url={`${BASE_URL}/movie/top_rated?api_key=${API_KEY}&include_adult=true`}
+          url={`${BASE_URL}/movie/top_rated?api_key=${API_KEY}&include_adult=false`}
           viewAllLink="/discover/top-rated"
         />
         <LazyMovieRow
           rowKey="comedyMovies"
           title="Comedy Movies"
-          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=35&sort_by=popularity.desc&include_adult=true`}
+          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=35&sort_by=popularity.desc&include_adult=false`}
           viewAllLink="/discover/comedy-35"
         />
         <LazyMovieRow
           rowKey="popularNow"
           title="Popular Now"
-          url={`${BASE_URL}/movie/popular?api_key=${API_KEY}&include_adult=true`}
+          url={`${BASE_URL}/movie/popular?api_key=${API_KEY}&include_adult=false`}
           viewAllLink="/discover/popular"
         />
         <LazyMovieRow
           rowKey="romanceMovies"
           title="Romance Movies"
-          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=10749&sort_by=popularity.desc&include_adult=true`}
+          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=10749&sort_by=popularity.desc&include_adult=false`}
           viewAllLink="/discover/romance-10749"
         />
         <LazyMovieRow
           rowKey="koreanMovies"
           title="Korean Movies"
-          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&with_original_language=ko&sort_by=popularity.desc&include_adult=true`}
+          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&with_original_language=ko&sort_by=popularity.desc&include_adult=false`}
           viewAllLink="/discover/korean"
         />
         <LazyMovieRow
           rowKey="indianMovies"
           title="Indian Movies"
-          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&with_original_language=hi&sort_by=popularity.desc&include_adult=true`}
+          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&with_original_language=hi&sort_by=popularity.desc&include_adult=false`}
           viewAllLink="/discover/bollywood"
         />
         <LazyMovieRow
           rowKey="hiddenGems"
           title="Hidden Gems"
-          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&vote_average.gte=7&vote_count.lte=300&sort_by=vote_average.desc&include_adult=true`}
+          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&vote_average.gte=7&vote_count.lte=300&sort_by=vote_average.desc&include_adult=false`}
           viewAllLink="/discover/hidden-gems"
         />
         <LazyMovieRow
           rowKey="feelGoodMovies"
           title="Feel Good Movies"
-          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=35,10749&sort_by=popularity.desc&include_adult=true`}
+          url={`${BASE_URL}/discover/movie?api_key=${API_KEY}&with_genres=35,10749&sort_by=popularity.desc&include_adult=false`}
           viewAllLink="/discover/feel-good"
         />
 

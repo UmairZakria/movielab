@@ -30,7 +30,7 @@ const Hero = ({ initialMovies = [] }) => {
     const fetchTrending = async () => {
       try {
         const res = await axios.get(
-          `${BASE_URL}/trending/all/day?api_key=${API_KEY}&include_adult=true`,
+          `${BASE_URL}/trending/all/day?api_key=${API_KEY}&include_adult=false`,
         );
         const trendingItems = res.data.results
           .filter(
