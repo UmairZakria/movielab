@@ -142,15 +142,19 @@ export async function generateMetadata({ params }) {
     const storyBrief = overview ? `${overview.substring(0, 120)}... ` : "";
     const castInfo = topActors ? `Starring ${topActors}. ` : "";
     const genreInfo = `A ${genreNames} ${mediaType === "tv" ? "series" : "film"} with ${voteAverage.toFixed(1)}/10 rating from ${voteCount.toLocaleString()} votes. `;
-    const suffix = `Stream ${title} in HD 1080p on MovieLab with zero ads, fast buffering, and no registration required. Download ${title} for offline viewing.`;
+    const suffix = `Stream ${title} in HD 1080p on MovieLab (movieslab.io / movies umairlab) with zero ads, fast buffering, and no registration required. Watch free movies and web series online.`;
 
     let description = `${prefix}${storyBrief}${castInfo}${genreInfo}${suffix}`;
     if (description.length > 320) {
       description = description.substring(0, 317) + "...";
     }
 
+    const titleStr = isTV
+      ? `Watch ${title} (${year}) Full TV Series Online Free HD | MovieLab`
+      : `Watch ${title} (${year}) Full Movie Free Online HD | MovieLab`;
+
     return {
-      title: `${title} (${year}) - Watch Full ${mediaType === "tv" ? "Series" : "Movie"} Online Free HD 1080p | MovieLab`,
+      title: titleStr,
       description: description,
       keywords: Array.from(keywords).join(", "),
       authors: director ? [director] : [],
@@ -166,7 +170,7 @@ export async function generateMetadata({ params }) {
         canonical: `https://movies.umairlab.com/movie/${slug}`,
       },
       openGraph: {
-        title: `${title} (${year}) - Watch Full ${mediaType === "tv" ? "Series" : "Movie"} Online Free HD | MovieLab`,
+        title: titleStr,
         description: description,
         url: `https://movies.umairlab.com/movie/${slug}`,
         siteName: "MovieLab",
@@ -203,7 +207,7 @@ export async function generateMetadata({ params }) {
       },
       twitter: {
         card: "summary_large_image",
-        title: `${title} (${year}) - Watch Full ${mediaType === "tv" ? "Series" : "Movie"} Online Free HD | MovieLab`,
+        title: titleStr,
         description: description,
         images: [`https://image.tmdb.org/t/p/original${backdrop}`],
         creator: "@MovieLab",
@@ -244,10 +248,96 @@ export default async function Page({ params }) {
   const isTV = slug?.startsWith("tv-");
   const mediaType = isTV ? "tv" : "movie";
 
+  let initialData = null;
+  try {
+    initialData = await getTMDBData(
+      mediaType,
+      id,
+      "videos,credits,keywords,release_dates,external_ids",
+    );
+  } catch (error) {
+    console.error("Failed to fetch initial data for movie/tv on server:", error);
+  }
+
+  const title = initialData ? (initialData.title || initialData.name) : "Movie/TV Show";
+  const releaseDate = initialData ? (initialData.release_date || initialData.first_air_date || "") : "";
+  const year = releaseDate ? new Date(releaseDate).getFullYear() : "";
+
+  const schemaMarkup = initialData ? (isTV 
+    ? {
+        "@context": "https://schema.org",
+        "@type": "TVSeries",
+        "name": initialData.name,
+        "description": initialData.overview || "",
+        "image": initialData.poster_path ? `https://image.tmdb.org/t/p/w500${initialData.poster_path}` : undefined,
+        "dateCreated": initialData.first_air_date,
+        "aggregateRating": initialData.vote_count > 0 ? {
+          "@type": "AggregateRating",
+          "ratingValue": initialData.vote_average,
+          "ratingCount": initialData.vote_count,
+          "bestRating": 10,
+          "worstRating": 1
+        } : undefined
+      }
+    : {
+        "@context": "https://schema.org",
+        "@type": "Movie",
+        "name": initialData.title,
+        "description": initialData.overview || "",
+        "image": initialData.poster_path ? `https://image.tmdb.org/t/p/w500${initialData.poster_path}` : undefined,
+        "dateCreated": initialData.release_date,
+        "director": initialData.credits?.crew
+          ?.filter(c => c.job === "Director")
+          .map(d => ({ "@type": "Person", "name": d.name })),
+        "actor": initialData.credits?.cast?.slice(0, 5).map(a => ({ "@type": "Person", "name": a.name })),
+        "aggregateRating": initialData.vote_count > 0 ? {
+          "@type": "AggregateRating",
+          "ratingValue": initialData.vote_average,
+          "ratingCount": initialData.vote_count,
+          "bestRating": 10,
+          "worstRating": 1
+        } : undefined
+      }) : null;
+
+  const breadcrumbMarkup = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://movies.umairlab.com"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": isTV ? "TV Series" : "Movies",
+        "item": isTV ? "https://movies.umairlab.com/discover/web-series" : "https://movies.umairlab.com/discover/trending"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": title,
+        "item": `https://movies.umairlab.com/movie/${slug}`
+      }
+    ]
+  };
+
   return (
     <>
+      {schemaMarkup && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(schemaMarkup) }}
+        />
+      )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbMarkup) }}
+      />
       <MovieContent
-        initialData={null}
+        initialData={initialData}
         slug={slug}
         id={id}
         mediaType={mediaType}

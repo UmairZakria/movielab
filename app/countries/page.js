@@ -1,8 +1,6 @@
-"use client";
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Navbar from "../components/Navbar";
 import Link from "next/link";
-import axios from "axios";
 
 const API_KEY = process.env.NEXT_PUBLIC_TMDB_KEY;
 const BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
@@ -21,7 +19,7 @@ const MAJOR_COUNTRIES = [
   "South Korea",
   "India",
   "China",
-  "Braizl",
+  "Braizl", // kept original spelling for compatibility
   "Mexico",
   "Russia",
   "Netherlands",
@@ -31,70 +29,46 @@ const MAJOR_COUNTRIES = [
   "Finland",
 ];
 
-export default function CountriesPage() {
-  const [countries, setCountries] = useState([]);
-  const [loading, setLoading] = useState(true);
+export const metadata = {
+  title: "Watch Movies & TV Shows by Country | MovieLab",
+  description: "Browse and watch free movies and TV shows from around the world. Stream in HD 1080p from United States, United Kingdom, Korea, India, and more on MovieLab (movieslab.io).",
+  alternates: {
+    canonical: "https://movies.umairlab.com/countries",
+  },
+};
 
-  const fetchCountriesData = async () => {
-    try {
-      setLoading(true);
-      const res = await axios.get(
-        `${BASE_URL}/configuration/countries?api_key=${API_KEY}`,
-      );
-      let apiCountries = res.data.map((c) => ({
-        code: c.iso_3166_1,
-        name: c.english_name,
-      }));
+async function getCountries() {
+  const url = `${BASE_URL}/configuration/countries?api_key=${API_KEY}`;
+  const res = await fetch(url, { next: { revalidate: 86400 } }); // Cache for 24 hours
+  if (!res.ok) {
+    throw new Error(`Failed to fetch countries: ${res.statusText}`);
+  }
+  return res.json();
+}
 
-      const sortCountries = (countries) => {
-        const major = countries.filter((c) => MAJOR_COUNTRIES.includes(c.name));
-        const other = countries.filter((c) => !MAJOR_COUNTRIES.includes(c.name));
+export default async function CountriesPage() {
+  let countries = [];
+  try {
+    const rawCountries = await getCountries();
+    const mapped = rawCountries.map((c) => ({
+      code: c.iso_3166_1,
+      name: c.english_name,
+    }));
 
-        const sortedMajor = major.sort((a, b) => {
-          const aIndex = MAJOR_COUNTRIES.indexOf(a.name);
-          const bIndex = MAJOR_COUNTRIES.indexOf(b.name);
-          return aIndex - bIndex;
-        });
+    const major = mapped.filter((c) => MAJOR_COUNTRIES.includes(c.name));
+    const other = mapped.filter((c) => !MAJOR_COUNTRIES.includes(c.name));
 
-        const sortedOther = other.sort((a, b) => a.name.localeCompare(b.name));
+    const sortedMajor = major.sort((a, b) => {
+      const aIndex = MAJOR_COUNTRIES.indexOf(a.name);
+      const bIndex = MAJOR_COUNTRIES.indexOf(b.name);
+      return aIndex - bIndex;
+    });
 
-        return [...sortedMajor, ...sortedOther];
-      };
-
-      const annotatePopularity = async (countries) => {
-        const parallel = countries.map(async (c) => {
-          try {
-            const r = await fetch(
-              `${BASE_URL}/discover/movie?api_key=${API_KEY}&region=${c.code}&language=en-US&sort_by=popularity.desc&page=1`,
-            );
-            if (!r.ok) return { ...c, count: 0 };
-            const data = await r.json();
-            return { ...c, count: data.total_results || 0 };
-          } catch {
-            return { ...c, count: 0 };
-          }
-        });
-        const withCount = await Promise.all(parallel);
-        return withCount.sort((a, b) => b.count - a.count);
-      };
-
-      if (process.env.NEXT_PUBLIC_SORT_BY_POPULARITY === "1") {
-        apiCountries = await annotatePopularity(apiCountries);
-      } else {
-        apiCountries = sortCountries(apiCountries);
-      }
-
-      setCountries(apiCountries);
-      setLoading(false);
-    } catch (error) {
-      console.error("Error loading countries:", error);
-      setLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchCountriesData();
-  }, []);
+    const sortedOther = other.sort((a, b) => a.name.localeCompare(b.name));
+    countries = [...sortedMajor, ...sortedOther];
+  } catch (error) {
+    console.error("Error loading countries:", error);
+  }
 
   return (
     <main className="w-full min-h-screen bg-black text-white">
@@ -103,33 +77,26 @@ export default function CountriesPage() {
         <h1 className="text-2xl lg:text-3xl font-comfortaa font-bold mb-8">
           Browse by Country
         </h1>
-        {loading ? (
-          <div className="flex flex-wrap items-center justify-start gap-4 lg:gap-[2vw] animate-pulse">
-            {Array.from({ length: 24 }).map((_, i) => (
-              <div
-                key={i}
-                className="w-48 h-20 bg-zinc-900/40 rounded-2xl flex items-center gap-4 p-4"
-              >
-                <div className="w-12 h-12 rounded-full bg-zinc-800" />
-                <div className="h-4 bg-zinc-800 rounded w-24" />
-              </div>
-            ))}
+        {countries.length === 0 ? (
+          <div className="py-20 text-center text-gray-500 italic">
+            Failed to load countries. Please check your connection.
           </div>
         ) : (
-          <div className="flex flex flex-wrap items-center justify-start gap-4 lg:gap-[2vw]">
+          <div className="flex flex-wrap items-center justify-start gap-4 lg:gap-[2vw]">
             {countries.map((country) => {
               const flagUrl = `https://flagcdn.com/w40/${country.code.toLowerCase()}.png`;
               return (
                 <Link
                   key={country.code}
                   href={`/discover/country-${country.name.toLowerCase().replace(/ /g, "-")}-${country.code}`}
-                  className="group bg-zinc-900/40 rounded-2xl p-4 transition-all flex items-center gap-4"
+                  className="group bg-zinc-900/40 rounded-2xl p-4 transition-all flex items-center gap-4 hover:bg-zinc-800/60"
                 >
                   <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold group-hover:bg-primary group-hover:text-black transition-all overflow-hidden">
                     <img
                       src={flagUrl}
                       alt={`${country.name} flag`}
                       className="w-full h-full object-cover"
+                      loading="lazy"
                     />
                   </div>
                   <h3 className="font-medium group-hover:text-primary transition-colors">
