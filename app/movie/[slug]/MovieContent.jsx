@@ -963,7 +963,7 @@ const MovieContent = ({ initialData, slug, id, mediaType = "movie" }) => {
         isOpen={isNoticeModalOpen}
         onClose={() => setIsNoticeModalOpen(false)}
         title={movie?.title || movie?.name}
-        downloadLink={`https://dl.vidsrc.vip/${mediaType === "tv" ? "tv" : "movie"}/${id}${mediaType === "tv" ? "/1/1" : ""}`}
+        downloadLink={`https://vidvault.ru/${mediaType === "tv" ? "tv" : "movie"}/${id}${mediaType === "tv" ? "/1/1" : ""}`}
       />
     </main>
   );

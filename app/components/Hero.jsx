@@ -152,7 +152,7 @@ const Hero = ({ initialMovies = [] }) => {
               isOpen={isNoticeModalOpen}
               onClose={() => setIsNoticeModalOpen(false)}
               title={currentMovie?.title || currentMovie?.name}
-              downloadLink={`https://dl.vidsrc.vip/${(currentMovie?.media_type || (currentMovie?.first_air_date ? "tv" : "movie")) === "tv" ? "tv" : "movie"}/${currentMovie?.id}${(currentMovie?.media_type || (currentMovie?.first_air_date ? "tv" : "movie")) === "tv" ? "/1/1" : ""}`}
+              downloadLink={`https://vidvault.ru/${(currentMovie?.media_type || (currentMovie?.first_air_date ? "tv" : "movie")) === "tv" ? "tv" : "movie"}/${currentMovie?.id}${(currentMovie?.media_type || (currentMovie?.first_air_date ? "tv" : "movie")) === "tv" ? "/1/1" : ""}`}
             />
           </motion.div>
         </div>

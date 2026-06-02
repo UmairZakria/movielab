@@ -1417,8 +1417,8 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
           title={movie?.title || movie?.name}
           downloadLink={
             mediaType === "movie"
-              ? `https://dl.vidsrc.vip/movie/${id}`
-              : `https://dl.vidsrc.vip/tv/${id}/${selectedSeason}/${selectedEpisode}`
+              ? `https://vidvault.ru/movie/${id}`
+              : `https://vidvault.ru/tv/${id}/${selectedSeason}/${selectedEpisode}`
           }
         />
       </div>
