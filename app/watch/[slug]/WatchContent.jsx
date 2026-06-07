@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/set-state-in-effect */
 "use client";
 import React, { useEffect, useState, useRef } from "react";
 import axios from "axios";
@@ -291,10 +292,9 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
 
   // Server Switcher States
   const providers = [
-    // replaced original server1 with new vidking service as requested
-    { name: "Server 1", value: "https://www.vidking.net", id: "vidking" },
+    { name: "Server 1", value: "https://vidlink.pro", id: "vidlink" },
     { name: "Server 2", value: "https://multiembed.mov/", id: "multiembed" },
-    { name: "Server 3", value: "https://vidsrc.me/embed", id: "vidsrc_me" },
+    { name: "Server 3", value: "https://vidking.net/", id: "vidking" },
     { name: "Server 4", value: "https://vidsrc.cc/v2/embed", id: "vidsrc_cc" },
     // { name: "Server 5", value: "https://www.vidking.net", id: "server5" },
   ];
@@ -375,11 +375,25 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
     }
   }, [movie]);
 
+  const fetchEpisodes = async (seasonNum) => {
+    try {
+      setLoadingTV(true);
+      const res = await axios.get(
+        `${BASE_URL}/tv/${id}/season/${seasonNum}?api_key=${API_KEY}`,
+      );
+      setEpisodes(res.data.episodes || []);
+      setLoadingTV(false);
+    } catch (error) {
+      console.error("Error fetching episodes:", error);
+      setLoadingTV(false);
+    }
+  };
+
   // 2. Fetch Season/Episode data for TV shows
   useEffect(() => {
     if (mediaType === "tv" && movie) {
       setSeasons(movie.seasons || []);
-      
+
       let targetSeason = 1;
       const savedResume = localStorage.getItem(`movielab_resume_${id}`);
       if (savedResume) {
@@ -397,29 +411,15 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
         setSelectedSeason(1);
         setSelectedEpisode(1);
       }
-      
+
       // Auto-fetch episodes for the target season
       fetchEpisodes(targetSeason);
-      
+
       setTimeout(() => {
         isRestored.current = true;
       }, 500);
     }
   }, [movie, mediaType, id]);
-
-  const fetchEpisodes = async (seasonNum) => {
-    try {
-      setLoadingTV(true);
-      const res = await axios.get(
-        `${BASE_URL}/tv/${id}/season/${seasonNum}?api_key=${API_KEY}`,
-      );
-      setEpisodes(res.data.episodes || []);
-      setLoadingTV(false);
-    } catch (error) {
-      console.error("Error fetching episodes:", error);
-      setLoadingTV(false);
-    }
-  };
 
   const handleSeasonChange = (e) => {
     const s = parseInt(e.target.value);
@@ -499,14 +499,15 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
     score += Math.min((item.popularity || 0) / 100, 10);
 
     // 6. Release Year Proximity
-    const currentYearStr = currentMovie.release_date || currentMovie.first_air_date;
+    const currentYearStr =
+      currentMovie.release_date || currentMovie.first_air_date;
     const itemYearStr = item.release_date || item.first_air_date;
-    
+
     if (currentYearStr && itemYearStr) {
-      const currentYear = parseInt(currentYearStr.split('-')[0]);
-      const itemYear = parseInt(itemYearStr.split('-')[0]);
+      const currentYear = parseInt(currentYearStr.split("-")[0]);
+      const itemYear = parseInt(itemYearStr.split("-")[0]);
       const yearDiff = Math.abs(currentYear - itemYear);
-      
+
       if (yearDiff <= 2) {
         score += 15; // Highly relevant era
       } else if (yearDiff <= 5) {
@@ -539,9 +540,15 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
       let dateFilter = "";
       const currentYearStr = movie?.release_date || movie?.first_air_date;
       if (currentYearStr && activeTab !== "actor" && activeTab !== "related") {
-        const currentYear = parseInt(currentYearStr.split('-')[0]);
-        const dateGte = mediaType === "tv" ? "first_air_date.gte" : "primary_release_date.gte";
-        const dateLte = mediaType === "tv" ? "first_air_date.lte" : "primary_release_date.lte";
+        const currentYear = parseInt(currentYearStr.split("-")[0]);
+        const dateGte =
+          mediaType === "tv"
+            ? "first_air_date.gte"
+            : "primary_release_date.gte";
+        const dateLte =
+          mediaType === "tv"
+            ? "first_air_date.lte"
+            : "primary_release_date.lte";
         dateFilter = `&${dateGte}=${currentYear - 5}-01-01&${dateLte}=${currentYear + 5}-12-31`;
       }
 
@@ -648,9 +655,7 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
 
       const safeResults = scoredResults
         .filter((item) => {
-          return (
-            item.id.toString() !== id.toString()
-          );
+          return item.id.toString() !== id.toString();
         })
         .sort((a, b) => b._similarityScore - a._similarityScore);
 
@@ -720,6 +725,14 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
       return `${server.value}/embed/movie/${mId}?color=2eafff&autoPlay=true`;
     }
 
+    if (server.id === "vidlink") {
+      // vidlink.pro endpoints with custom color themes matching MovieLab design (--color-primary: #2eafff, --color-secondary: #58b4ff)
+      if (type === "tv") {
+        return `${server.value}/tv/${mId}/${sea}/${epi}?primaryColor=2eafff&secondaryColor=58b4ff&iconColor=2eafff&icons=vid`;
+      }
+      return `${server.value}/movie/${mId}?primaryColor=2eafff&secondaryColor=58b4ff&iconColor=2eafff&icons=vid`;
+    }
+
     if (server.id === "multiembed") {
       if (type === "tv") {
         return `${server.value}?video_id=${mId}&tmdb=1&s=${sea}&e=${epi}`;
@@ -738,8 +751,6 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
       return `${server.value}/movie/${mId}`;
     }
   };
-
-
 
   useEffect(() => {
     if (mediaType === "tv" && id && isRestored.current) {
@@ -985,7 +996,7 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
                 <button
                   key={provider.name}
                   onClick={() => {
-                      setSelectedServer(provider);
+                    setSelectedServer(provider);
                   }}
                   className={`px-4 py-2 rounded-full text-xs font-medium transition ${
                     selectedServer.name === provider.name
@@ -1330,9 +1341,9 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
                         <h3 className="text-md md:text-xl lg:text-lg leading-normal font-poppins line-clamp-2 group-hover:text-primary transition">
                           {rec.title || rec.name}
                         </h3>
-                          <p className="text-xs  md:text-sm text-gray-300 mb-2 lg:mb-[0.5vw] font-poppins tracking-wide mt-1 line-clamp-2">
-                        {rec.overview}
-                      </p>
+                        <p className="text-xs  md:text-sm text-gray-300 mb-2 lg:mb-[0.5vw] font-poppins tracking-wide mt-1 line-clamp-2">
+                          {rec.overview}
+                        </p>
                         <p className="text-xs md:text-sm text-gray-400 mt-1">
                           {
                             (rec.release_date || rec.first_air_date)?.split(
