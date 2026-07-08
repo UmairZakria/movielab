@@ -208,8 +208,10 @@ export async function generateMetadata({ params }) {
   }
 }
 
-export default async function Page({ params }) {
+export default async function Page({ params, searchParams }) {
   const { slug } = await params;
+  const search = await searchParams;
+  const initialServerId = search?.server;
   const id = slug?.split("-").pop();
   const isTV = slug?.startsWith("tv-");
   const mediaType = isTV ? "tv" : "movie";
@@ -278,6 +280,7 @@ export default async function Page({ params }) {
         slug={slug}
         id={id}
         mediaType={mediaType}
+        initialServerId={initialServerId}
       />
     </>
   );

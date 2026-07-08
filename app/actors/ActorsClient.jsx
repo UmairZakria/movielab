@@ -105,6 +105,7 @@ const ActorsClient = ({ trendingInitial, popularInitial }) => {
   const [hasMore, setHasMore] = useState(true);
 
   const observerRef = useRef();
+  const isFetchingRef = useRef(false);
 
   const tabs = [
     { id: "acting", label: "Famous Stars" },
@@ -117,55 +118,20 @@ const ActorsClient = ({ trendingInitial, popularInitial }) => {
     try {
       setLoading(true);
 
-      const getLatestWorkDate = (actor) => {
-        const dates = (actor.known_for || [])
-          .map(m => m.release_date || m.first_air_date)
-          .filter(Boolean);
-        return dates.length > 0 ? Math.max(...dates.map(d => new Date(d).getTime())) : 0;
-      };
-
-      const sortActorsByFreshness = (list) => {
-        return [...list].sort((a, b) => {
-          const dateA = getLatestWorkDate(a);
-          const dateB = getLatestWorkDate(b);
-          if (dateA !== dateB) return dateB - dateA;
-          return (b.popularity || 0) - (a.popularity || 0);
-        });
-      };
-
-      const pagePromises = [1, 2, 3, 4, 5].map(p =>
-        axios.get(`${BASE_URL}/person/popular?api_key=${API_KEY}&include_adult=false&page=${p}`)
-      );
-      const [t1, t2, t3, ...pResponses] = await Promise.all([
+      const [trendingRes, popularRes] = await Promise.all([
         axios.get(`${BASE_URL}/trending/person/week?api_key=${API_KEY}&include_adult=false&page=1`),
-        axios.get(`${BASE_URL}/trending/person/week?api_key=${API_KEY}&include_adult=false&page=2`),
-        axios.get(`${BASE_URL}/trending/person/week?api_key=${API_KEY}&include_adult=false&page=3`),
-        ...pagePromises,
-        axios.get(`${BASE_URL}/trending/person/day?api_key=${API_KEY}&include_adult=false&page=1`),
+        axios.get(`${BASE_URL}/person/popular?api_key=${API_KEY}&include_adult=false&page=1`),
       ]);
 
-      const td1 = pResponses.pop();
-      const allTrending = [...t1.data.results, ...t2.data.results, ...t3.data.results, ...td1.data.results];
-      const allPopular = pResponses.flatMap(r => r.data.results || []);
+      const filteredTrending = (trendingRes.data.results || [])
+        .filter(item => item.profile_path && item.popularity > 9)
+        .slice(0, 25);
+      setTrending(filteredTrending);
 
-      const filteredTrending = allTrending
-        .filter(item => 
-          item.profile_path && 
-          item.known_for_department === "Acting" && 
-          (item.popularity > 9)
-        );
-      
-      const uniqueTrending = Array.from(new Map(filteredTrending.map(item => [item.id, item])).values()).slice(0, 25);
-      setTrending(uniqueTrending);
-
-      const initialPopular = allPopular.filter(a =>
-        a.known_for_department === "Acting" &&
-        a.profile_path
-      );
-      const uniqueInitial = Array.from(new Map(initialPopular.map(item => [item.id, item])).values());
-      const sorted = sortActorsByFreshness(uniqueInitial);
-      setPopular(sorted);
-      setPage(5);
+      const initialPopular = (popularRes.data.results || [])
+        .filter(a => a.profile_path);
+      setPopular(initialPopular);
+      setPage(1);
 
       setLoading(false);
     } catch (error) {
@@ -175,7 +141,8 @@ const ActorsClient = ({ trendingInitial, popularInitial }) => {
   };
 
   const fetchMorePopular = async () => {
-    if (!hasMore || searchQuery) return;
+    if (!hasMore || searchQuery || isFetchingRef.current) return;
+    isFetchingRef.current = true;
     try {
       const nextPage = page + 1;
       const res = await axios.get(
@@ -190,9 +157,11 @@ const ActorsClient = ({ trendingInitial, popularInitial }) => {
       if (newItems.length === 0) {
         if (fetchedItems.length > 0 && nextPage < 50) {
           setPage(nextPage);
+          isFetchingRef.current = false;
           return;
         }
         setHasMore(false);
+        isFetchingRef.current = false;
         return;
       }
 
@@ -201,8 +170,10 @@ const ActorsClient = ({ trendingInitial, popularInitial }) => {
         return Array.from(new Map(combined.map(item => [item.id, item])).values());
       });
       setPage(nextPage);
+      isFetchingRef.current = false;
     } catch (error) {
       console.error("Error fetching more actors:", error);
+      isFetchingRef.current = false;
     }
   };
 

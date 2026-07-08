@@ -12,14 +12,23 @@ const CustomScrollbar = () => {
   const maxScrollRef = useRef(0);
   const isDraggingRef = useRef(false);
 
+  const getScrollMetrics = useCallback(() => {
+    const scrollHeight = document.documentElement.scrollHeight;
+    const clientHeight = window.innerHeight;
+    return {
+      maxScroll: Math.max(scrollHeight - clientHeight, 1),
+      scrollHeight,
+      clientHeight,
+    };
+  }, []);
+
   const updateScrollbar = useCallback(() => {
     const thumb = thumbRef.current;
     const container = containerRef.current;
     if (!thumb || !container) return;
 
     const scrollbarHeight = container.getBoundingClientRect().height;
-    const scrollHeight = document.documentElement.scrollHeight;
-    const clientHeight = window.innerHeight;
+    const { scrollHeight, clientHeight } = getScrollMetrics();
 
     maxScrollRef.current = Math.max(scrollHeight - clientHeight, 1);
     const scrollRatio = clientHeight / scrollHeight;
@@ -28,14 +37,56 @@ const CustomScrollbar = () => {
     maxThumbMoveRef.current = scrollbarHeight - thumbHeight;
 
     gsap.set(thumb, { height: thumbHeight });
+  }, [getScrollMetrics]);
+
+  const applyScroll = useCallback((scrollY) => {
+    const clamped = Math.max(0, Math.min(scrollY, maxScrollRef.current));
+    const progress = maxScrollRef.current > 0 ? clamped / maxScrollRef.current : 0;
+    gsap.set(thumbRef.current, { y: progress * maxThumbMoveRef.current });
+    window.scrollTo(0, clamped);
   }, []);
 
   const updateThumbPosition = useCallback(() => {
-    if (!maxScrollRef.current || !thumbRef.current || isDraggingRef.current)
-      return;
+    if (!maxScrollRef.current || !thumbRef.current || isDraggingRef.current) return;
     const progress = window.scrollY / maxScrollRef.current;
     gsap.set(thumbRef.current, { y: progress * maxThumbMoveRef.current });
   }, []);
+
+  const scrollBy = useCallback((amount) => {
+    applyScroll(window.scrollY + amount);
+  }, [applyScroll]);
+
+  const handleKeyDown = useCallback((e) => {
+    const step = window.innerHeight * 0.1; // 10% of viewport per arrow press
+    const page = window.innerHeight * 0.8; // 80% of viewport per page
+
+    switch (e.key) {
+      case "ArrowUp":
+        e.preventDefault();
+        scrollBy(-step);
+        break;
+      case "ArrowDown":
+        e.preventDefault();
+        scrollBy(step);
+        break;
+      case "PageUp":
+        e.preventDefault();
+        scrollBy(-page);
+        break;
+      case "PageDown":
+        e.preventDefault();
+        scrollBy(page);
+        break;
+      case "Home":
+        e.preventDefault();
+        applyScroll(0);
+        break;
+      case "End":
+        e.preventDefault();
+        applyScroll(maxScrollRef.current);
+        break;
+    }
+  }, [scrollBy, applyScroll]);
 
   const handleThumbMouseDown = useCallback((e) => {
     e.preventDefault();
@@ -45,38 +96,22 @@ const CustomScrollbar = () => {
     const thumb = thumbRef.current;
     if (!container || !thumb) return;
 
-    const containerRect = container.getBoundingClientRect();
     const thumbRect = thumb.getBoundingClientRect();
-
-    // Calculate offset from mouse position to thumb top
     const mouseOffsetY = e.clientY - thumbRect.top;
 
     const handleMouseMove = (e) => {
       if (!isDraggingRef.current) return;
-
-      // Get fresh container position for each move
       const currentContainerRect = container.getBoundingClientRect();
-
-      // Calculate new thumb position relative to container
       const newThumbTop = e.clientY - currentContainerRect.top - mouseOffsetY;
+      const clampedThumbTop = Math.max(0, Math.min(newThumbTop, maxThumbMoveRef.current));
 
-      // Clamp thumb position within bounds
-      const clampedThumbTop = Math.max(
-        0,
-        Math.min(newThumbTop, maxThumbMoveRef.current),
-      );
-
-      // Update thumb position immediately with no animation
       gsap.set(thumb, { y: clampedThumbTop, duration: 0 });
 
-      // Calculate and update scroll position
-      const scrollProgress =
-        maxThumbMoveRef.current > 0
-          ? clampedThumbTop / maxThumbMoveRef.current
-          : 0;
+      const scrollProgress = maxThumbMoveRef.current > 0
+        ? clampedThumbTop / maxThumbMoveRef.current
+        : 0;
       const newScrollY = scrollProgress * maxScrollRef.current;
 
-      // Use requestAnimationFrame to ensure smooth scrolling
       requestAnimationFrame(() => {
         window.scrollTo(0, newScrollY);
       });
@@ -89,12 +124,30 @@ const CustomScrollbar = () => {
       document.body.style.userSelect = "";
     };
 
-    // Prevent text selection during drag
     document.body.style.userSelect = "none";
-
     window.addEventListener("mousemove", handleMouseMove);
     window.addEventListener("mouseup", handleMouseUp);
   }, []);
+
+  const handleTrackClick = useCallback((e) => {
+    if (isDraggingRef.current) return;
+    const container = containerRef.current;
+    if (!container || !thumbRef.current) return;
+
+    const rect = container.getBoundingClientRect();
+    const clickY = e.clientY - rect.top;
+    const thumbHeight = thumbRef.current.getBoundingClientRect().height;
+    const thumbTop = parseFloat(gsap.getProperty(thumbRef.current, "y"));
+
+    // Only jump if clicking on the track (not the thumb)
+    if (clickY < thumbTop || clickY > thumbTop + thumbHeight) {
+      const progress = maxThumbMoveRef.current > 0
+        ? (clickY - thumbHeight / 2) / maxThumbMoveRef.current
+        : 0;
+      const clampedProgress = Math.max(0, Math.min(progress, 1));
+      applyScroll(clampedProgress * maxScrollRef.current);
+    }
+  }, [applyScroll]);
 
   useEffect(() => {
     const initScrollTrigger = () => {
@@ -105,13 +158,11 @@ const CustomScrollbar = () => {
         onUpdate: updateThumbPosition,
         onRefresh: () => {
           updateScrollbar();
-          // handleThumbMouseDown();
           updateThumbPosition();
         },
       });
     };
 
-    // Initial update
     updateScrollbar();
     initScrollTrigger();
     updateThumbPosition();
@@ -124,7 +175,6 @@ const CustomScrollbar = () => {
 
     window.addEventListener("resize", onResize);
 
-    // Add ResizeObserver to detect content height changes (infinite scroll)
     const resizeObserver = new ResizeObserver(() => {
       onResize();
     });
@@ -141,11 +191,19 @@ const CustomScrollbar = () => {
     <div
       ref={containerRef}
       className="hidden lg:block fixed top-[8vh] md:top-[5vh] right-0 md:right-[0.4vw] w-[0.4vw] h-[90vh] bg-white/25 rounded-md z-[1000] overflow-hidden"
+      onClick={handleTrackClick}
     >
       <div
         ref={thumbRef}
-        className="w-full bg-white rounded-full absolute top-0 cursor-pointer"
+        role="scrollbar"
+        aria-valuenow={0}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label="Scroll"
+        tabIndex={0}
+        className="w-full bg-white rounded-full absolute top-0 cursor-pointer focus:bg-primary focus:outline-none"
         onMouseDown={handleThumbMouseDown}
+        onKeyDown={handleKeyDown}
       />
     </div>
   );

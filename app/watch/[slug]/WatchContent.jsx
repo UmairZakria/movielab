@@ -281,7 +281,44 @@ const EpisodePlaylist = ({
   );
 };
 
-const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
+const WatchContent = ({ initialData, slug, id, mediaType = "movie", initialServerId }) => {
+  // 4. Server Verification Logic
+  const constructServerUrl = (server, type, mId, sea, epi) => {
+    if (server.id === "vidking") {
+      // vidking endpoints as provided in instruction
+      if (type === "tv") {
+        return `${server.value}/embed/tv/${mId}/${sea}/${epi}?color=2eafff&autoPlay=true&nextEpisode=true&episodeSelector=true`;
+      }
+      return `${server.value}/embed/movie/${mId}?color=2eafff&autoPlay=true`;
+    }
+
+    if (server.id === "vidlink") {
+      // vidlink.pro endpoints with custom color themes matching MovieLab design (--color-primary: #2eafff, --color-secondary: #58b4ff)
+      if (type === "tv") {
+        return `${server.value}/tv/${mId}/${sea}/${epi}?primaryColor=2eafff&secondaryColor=58b4ff&iconColor=2eafff&icons=vid`;
+      }
+      return `${server.value}/movie/${mId}?primaryColor=2eafff&secondaryColor=58b4ff&iconColor=2eafff&icons=vid`;
+    }
+
+    if (server.id === "multiembed") {
+      if (type === "tv") {
+        return `${server.value}?video_id=${mId}&tmdb=1&s=${sea}&e=${epi}`;
+      } else {
+        return `${server.value}?video_id=${mId}&tmdb=1`;
+      }
+    }
+    if (type === "tv") {
+      // if (server.id === "vidsrc_me")  return `${server.value}/tv/${mId}/${sea}/${epi}`;
+      if (server.id === "2embed")
+        return `${server.value}/embedtv/${mId}&s=${sea}&e=${epi}`;
+      return `${server.value}/tv/${mId}/${sea}/${epi}`;
+    } else {
+      // if (server.id === "vidsrc_me") return `${server.value}/movie/${mId}`;
+      if (server.id === "2embed") return `${server.value}/embed/${mId}`;
+      return `${server.value}/movie/${mId}`;
+    }
+  };
+
   const [movie, setMovie] = useState(initialData);
   const [loading, setLoading] = useState(!initialData);
   const [trailer, setTrailer] = useState(null);
@@ -298,7 +335,13 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
     { name: "Server 4", value: "https://vidsrc.cc/v2/embed", id: "vidsrc_cc" },
     // { name: "Server 5", value: "https://www.vidking.net", id: "server5" },
   ];
-  const [selectedServer, setSelectedServer] = useState(providers[0]);
+  const [selectedServer, setSelectedServer] = useState(() => {
+    if (initialServerId) {
+      const found = providers.find((p) => p.id === initialServerId);
+      if (found) return found;
+    }
+    return providers[0];
+  });
   const iframeRef = useRef(null);
 
   // Server Switcher States
@@ -321,6 +364,29 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
   const [isNoticeModalOpen, setIsNoticeModalOpen] = useState(false);
   const [activeMenuId, setActiveMenuId] = useState(null);
   const [activeTab, setActiveTab] = useState("all");
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const playerContainerRef = useRef(null);
+
+  const toggleFullscreen = async () => {
+    if (!playerContainerRef.current) return;
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+    } else {
+      await playerContainerRef.current.requestFullscreen();
+    }
+  };
+
+  useEffect(() => {
+    const handleFsChange = () => {
+      setIsFullscreen(!!document.fullscreenElement);
+    };
+    document.addEventListener("fullscreenchange", handleFsChange);
+    return () => document.removeEventListener("fullscreenchange", handleFsChange);
+  }, []);
+
+
+
+
 
   // Close menu when clicking outside
   useEffect(() => {
@@ -715,42 +781,7 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
     return () => observer.disconnect();
   }, [loadingMoreRecs, hasMoreRecs]);
 
-  // 4. Server Verification Logic
-  const constructServerUrl = (server, type, mId, sea, epi) => {
-    if (server.id === "vidking") {
-      // vidking endpoints as provided in instruction
-      if (type === "tv") {
-        return `${server.value}/embed/tv/${mId}/${sea}/${epi}?color=2eafff&autoPlay=true&nextEpisode=true&episodeSelector=true`;
-      }
-      return `${server.value}/embed/movie/${mId}?color=2eafff&autoPlay=true`;
-    }
 
-    if (server.id === "vidlink") {
-      // vidlink.pro endpoints with custom color themes matching MovieLab design (--color-primary: #2eafff, --color-secondary: #58b4ff)
-      if (type === "tv") {
-        return `${server.value}/tv/${mId}/${sea}/${epi}?primaryColor=2eafff&secondaryColor=58b4ff&iconColor=2eafff&icons=vid`;
-      }
-      return `${server.value}/movie/${mId}?primaryColor=2eafff&secondaryColor=58b4ff&iconColor=2eafff&icons=vid`;
-    }
-
-    if (server.id === "multiembed") {
-      if (type === "tv") {
-        return `${server.value}?video_id=${mId}&tmdb=1&s=${sea}&e=${epi}`;
-      } else {
-        return `${server.value}?video_id=${mId}&tmdb=1`;
-      }
-    }
-    if (type === "tv") {
-      // if (server.id === "vidsrc_me")  return `${server.value}/tv/${mId}/${sea}/${epi}`;
-      if (server.id === "2embed")
-        return `${server.value}/embedtv/${mId}&s=${sea}&e=${epi}`;
-      return `${server.value}/tv/${mId}/${sea}/${epi}`;
-    } else {
-      // if (server.id === "vidsrc_me") return `${server.value}/movie/${mId}`;
-      if (server.id === "2embed") return `${server.value}/embed/${mId}`;
-      return `${server.value}/movie/${mId}`;
-    }
-  };
 
   useEffect(() => {
     if (mediaType === "tv" && id && isRestored.current) {
@@ -971,9 +1002,13 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
         <div className="flex flex-col lg:flex-row gap-10 justify-center lg:px-[2vw] lg:py-[8vw] py-[160px]">
           <div className="flex-1 md:pb-0 pb-10">
             {/* Main Player */}
-            <div className="w-full aspect-video bg-black lg:rounded-xl overflow-hidden mb-4 border border-zinc-800 relative group">
+            <div
+              ref={playerContainerRef}
+              className="w-full aspect-video bg-black lg:rounded-xl overflow-hidden mb-4 border border-zinc-800 relative group"
+            >
               <iframe
                 ref={iframeRef}
+                key={`${selectedServer.id}-${id}-${selectedSeason}-${selectedEpisode}`}
                 src={constructServerUrl(
                   selectedServer,
                   mediaType,
@@ -981,10 +1016,43 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
                   selectedSeason,
                   selectedEpisode,
                 )}
-                allow="autoplay; fullscreen"
+                allow="autoplay; encrypted-media; picture-in-picture"
                 referrerPolicy="origin"
                 className="w-full h-full"
               />
+              {/* Fullscreen overlay button */}
+              <button
+                onClick={toggleFullscreen}
+                className="absolute bottom-3 right-3 z-20 bg-black/60 hover:bg-black/80 backdrop-blur-sm text-white rounded-lg p-2 opacity-0 group-hover:opacity-100 transition-opacity"
+                aria-label={isFullscreen ? "Exit Fullscreen" : "Enter Fullscreen"}
+              >
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  className="w-5 h-5"
+                >
+                  {isFullscreen ? (
+                    <>
+                      <polyline points="4 14 10 14 10 20" />
+                      <polyline points="20 10 14 10 14 4" />
+                      <line x1="14" y1="10" x2="21" y2="3" />
+                      <line x1="3" y1="21" x2="10" y2="14" />
+                    </>
+                  ) : (
+                    <>
+                      <polyline points="15 3 21 3 21 9" />
+                      <polyline points="9 21 3 21 3 15" />
+                      <line x1="21" y1="3" x2="14" y2="10" />
+                      <line x1="3" y1="21" x2="10" y2="14" />
+                    </>
+                  )}
+                </svg>
+              </button>
             </div>
 
             {/* Server Switcher */}
@@ -996,7 +1064,11 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie" }) => {
                 <button
                   key={provider.name}
                   onClick={() => {
-                    setSelectedServer(provider);
+                    if (typeof window !== "undefined") {
+                      const params = new URLSearchParams(window.location.search);
+                      params.set("server", provider.id);
+                      window.location.href = `${window.location.pathname}?${params.toString()}`;
+                    }
                   }}
                   className={`px-4 py-2 rounded-full text-xs font-medium transition ${
                     selectedServer.name === provider.name

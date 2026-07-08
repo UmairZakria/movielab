@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+
 :root {
   /* Default (Mobile) - using fixed pixels for readability on small screens */
   --text-xs-fluid: 12px;
