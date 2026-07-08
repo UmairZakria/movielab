@@ -3,13 +3,16 @@ export async function GET() {
 
   const sitemaps = ["static.xml", "movies.xml", "webseries.xml"];
 
+  // Fixed date to avoid constant re-crawl churn
+  const lastmod = "2026-01-01T00:00:00Z";
+
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
   xml += '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
 
   sitemaps.forEach((sm) => {
     xml += "  <sitemap>\n";
     xml += `    <loc>${EXTERNAL_DATA_URL}/${sm}</loc>\n`;
-    xml += `    <lastmod>${new Date().toISOString()}</lastmod>\n`;
+    xml += `    <lastmod>${lastmod}</lastmod>\n`;
     xml += "  </sitemap>\n";
   });
 

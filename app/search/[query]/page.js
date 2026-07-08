@@ -10,7 +10,6 @@ export async function generateMetadata({ params }) {
   return {
     title: title,
     description: description,
-    keywords: `watch ${decodedQuery} free, stream ${decodedQuery}, ${decodedQuery} online free, download ${decodedQuery} 1080p`,
     openGraph: {
       title: title,
       description: description,

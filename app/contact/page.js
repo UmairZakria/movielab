@@ -1,5 +1,26 @@
 import React from "react";
 import Footer from "../components/Footer";
+import Navbar from "../components/Navbar";
+
+export const metadata = {
+  title: "Contact Us | MovieLab",
+  description: "Get in touch with MovieLab. Send us your feedback, suggestions, or questions about the platform.",
+  alternates: {
+    canonical: "https://movies.umairlab.com/contact",
+  },
+  openGraph: {
+    title: "Contact Us | MovieLab",
+    description: "Get in touch with MovieLab. Send us your feedback, suggestions, or questions about the platform.",
+    url: "https://movies.umairlab.com/contact",
+    siteName: "MovieLab",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Contact Us | MovieLab",
+    description: "Get in touch with MovieLab. Send us your feedback, suggestions, or questions about the platform.",
+  },
+};
 
 export default function ContactPage() {
   return (

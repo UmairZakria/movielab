@@ -28,7 +28,19 @@ export async function generateMetadata({ params }) {
       openGraph: {
         title: `${name} | MovieLab`,
         description: bio.substring(0, 160),
-        images: [{ url: `https://image.tmdb.org/t/p/w500${primaryImage}` }],
+        images: primaryImage
+          ? [{
+              url: `https://image.tmdb.org/t/p/w500${primaryImage}`,
+              width: 500,
+              height: 750,
+              alt: `${name} profile photo`,
+            }]
+          : [{
+              url: "https://movies.umairlab.com/og-image.jpg",
+              width: 1200,
+              height: 630,
+              alt: "MovieLab - Free Movie Streaming",
+            }],
       },
     };
   } catch (error) {

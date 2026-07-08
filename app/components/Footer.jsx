@@ -34,7 +34,7 @@ const Footer = () => {
           <div className="flex items-center gap-2">
             <span>Made by Umair at</span>
             <Link
-              href="https://umairlab.com"
+              href="/"
               className="flex items-baseline font-comfortaa gap-1 tracking-tighter"
             >
               <span className="text-white font-bold text-lg">.umair</span>

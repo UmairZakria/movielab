@@ -2,6 +2,27 @@ import React from "react";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
+export const metadata = {
+  title: "About MovieLab | Free HD Streaming Platform",
+  description: "MovieLab is a free movie and TV series discovery platform. Browse trending titles, explore genres, find hidden gems — no registration required.",
+  alternates: {
+    canonical: "https://movies.umairlab.com/about",
+  },
+  openGraph: {
+    title: "About MovieLab | Free HD Streaming Platform",
+    description: "MovieLab helps you discover trending movies, TV series, and hidden gems — completely free, no sign-up needed.",
+    url: "https://movies.umairlab.com/about",
+    siteName: "MovieLab",
+    type: "website",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "About MovieLab | Free HD Streaming Platform",
+    description: "MovieLab helps you discover trending movies, TV series, and hidden gems — completely free, no sign-up needed.",
+  },
+};
+
 export default function AboutPage() {
   return (
     <main className="w-full pt-[10vw] min-h-screen bg-black text-white pb-20 px-4 lg:px-[10vw] xl:px-[15vw]">

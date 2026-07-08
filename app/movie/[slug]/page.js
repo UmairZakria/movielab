@@ -35,95 +35,6 @@ export async function generateMetadata({ params }) {
     const voteAverage = data.vote_average || 0;
     const voteCount = data.vote_count || 0;
 
-    // Enhanced keywords generation
-    const keywords = new Set();
-
-    // Primary keywords
-    if (title) {
-      keywords.add(title);
-      keywords.add(`${title} ${year}`);
-      keywords.add(`${title} full ${mediaType}`);
-      keywords.add(`${title} online`);
-      keywords.add(`${title} free`);
-      keywords.add(`${title} streaming`);
-      keywords.add(`${title} download`);
-      keywords.add(`${title} HD`);
-      keywords.add(`${title} 1080p`);
-      keywords.add(`${title} 4K`);
-    }
-
-    // Genre keywords
-    if (data.genres) {
-      data.genres.forEach((g) => {
-        keywords.add(g.name);
-        keywords.add(`${g.name} ${mediaType}s`);
-        keywords.add(`${g.name} online`);
-        keywords.add(`${g.name} free`);
-        keywords.add(`${g.name} streaming`);
-      });
-    }
-
-    // Cast keywords (top 5)
-    if (data.credits && data.credits.cast) {
-      data.credits.cast.slice(0, 5).forEach((actor) => {
-        keywords.add(actor.name);
-        keywords.add(`${actor.name} movies`);
-        keywords.add(`${actor.name} films`);
-      });
-    }
-
-    // Crew keywords (director, writer)
-    if (data.credits && data.credits.crew) {
-      const director = data.credits.crew.find(
-        (person) => person.job === "Director",
-      );
-      const writer = data.credits.crew.find(
-        (person) => person.job === "Writer" || person.job === "Screenplay",
-      );
-
-      if (director) {
-        keywords.add(director.name);
-        keywords.add(`${director.name} films`);
-        keywords.add(`${director.name} movies`);
-      }
-
-      if (writer) {
-        keywords.add(writer.name);
-        keywords.add(`${writer.name} writer`);
-      }
-    }
-
-    // Production company keywords
-    if (data.production_companies && data.production_companies.length > 0) {
-      data.production_companies.slice(0, 3).forEach((company) => {
-        keywords.add(company.name);
-        keywords.add(`${company.name} movies`);
-      });
-    }
-
-    // TMDB keywords
-    if (data.keywords) {
-      const kws = data.keywords.keywords || data.keywords.results || [];
-      kws.forEach((k) => keywords.add(k.name));
-    }
-
-    // Year-based keywords
-    if (year) {
-      keywords.add(`${year} movies`);
-      keywords.add(`${year} ${mediaType}s`);
-      keywords.add(`movies from ${year}`);
-    }
-
-    // Quality and platform keywords
-    keywords.add("free movies");
-    keywords.add("online streaming");
-    keywords.add("HD movies");
-    keywords.add("1080p movies");
-    keywords.add("4K movies");
-    keywords.add("no ads");
-    keywords.add("fast streaming");
-    keywords.add("MovieLab");
-
     // Enhanced SEO description
     const genreNames = data.genres
       ? data.genres.map((g) => g.name).join(", ")
@@ -156,7 +67,6 @@ export async function generateMetadata({ params }) {
     return {
       title: titleStr,
       description: description,
-      keywords: Array.from(keywords).join(", "),
       authors: director ? [director] : [],
       creator: director || "MovieLab",
       publisher: "MovieLab",
@@ -225,8 +135,8 @@ export async function generateMetadata({ params }) {
         },
       },
       verification: {
-        google: "your-google-verification-code",
-        yandex: "your-yandex-verification-code",
+        google: "VBh8Z5n2gYt-blPxDnyzDu5KU9JOBHYSdaEZmv-s3bk",
+        yandex: "03632b5675884ef5",
       },
     };
   } catch (error) {

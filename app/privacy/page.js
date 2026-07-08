@@ -2,6 +2,26 @@ import React from "react";
 import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
+export const metadata = {
+  title: "Privacy Policy | MovieLab",
+  description: "MovieLab privacy policy — how we collect, use, and protect your personal information when you use our movie streaming platform.",
+  alternates: {
+    canonical: "https://movies.umairlab.com/privacy",
+  },
+  openGraph: {
+    title: "Privacy Policy | MovieLab",
+    description: "MovieLab privacy policy — how we collect, use, and protect your personal information.",
+    url: "https://movies.umairlab.com/privacy",
+    siteName: "MovieLab",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Privacy Policy | MovieLab",
+    description: "MovieLab privacy policy — how we collect, use, and protect your personal information.",
+  },
+};
+
 export default function PrivacyPage() {
   return (
     <main className="w-full pt-[10vw] min-h-screen bg-black text-white pb-20 px-4 lg:px-[10vw] xl:px-[15vw]">

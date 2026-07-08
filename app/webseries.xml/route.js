@@ -8,33 +8,42 @@ const createSlug = (title, id, type) => {
   return `${prefix}${title.toLowerCase().replace(/[^\w-]+/g, "")}-${id}`;
 };
 
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function fetchPage(i) {
+  await sleep(i * 200); // Stagger requests 200ms apart
+  const res = await fetch(
+    `${TMDB_BASE_URL}/discover/tv?api_key=${API_KEY}&sort_by=popularity.desc&first_air_date.gte=2000-01-01&page=${i}`,
+  );
+  if (!res.ok) return [];
+  const data = await res.json();
+  return data.results || [];
+}
+
 export async function GET() {
   try {
-    const totalPages = 50; // 50 pages * 20 items = 1000 items
+    const totalPages = 50;
     const promises = [];
-
     for (let i = 1; i <= totalPages; i++) {
-      promises.push(
-        fetch(
-          `${TMDB_BASE_URL}/discover/tv?api_key=${API_KEY}&sort_by=popularity.desc&first_air_date.gte=2000-01-01&page=${i}`,
-        )
-          .then((res) => res.json())
-          .then((data) => data.results || [])
-          .catch(() => []),
-      );
+      promises.push(fetchPage(i));
     }
 
-    const results = await Promise.all(promises);
-    const series = results.flat();
+    const results = await Promise.allSettled(promises);
+    const series = results
+      .filter((r) => r.status === "fulfilled")
+      .flatMap((r) => r.value);
 
     let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
     xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
 
+    const seen = new Set();
     series.forEach((item) => {
+      if (seen.has(item.id)) return;
+      seen.add(item.id);
       const slug = createSlug(item.name, item.id, "tv");
       xml += "  <url>\n";
       xml += `    <loc>${EXTERNAL_DATA_URL}/movie/${slug}</loc>\n`;
-      xml += `    <lastmod>${new Date(item.first_air_date || new Date()).toISOString()}</lastmod>\n`;
+      xml += `    <lastmod>${item.first_air_date || "2026-01-01"}</lastmod>\n`;
       xml += "    <changefreq>weekly</changefreq>\n";
       xml += "    <priority>0.8</priority>\n";
       xml += "  </url>\n";
@@ -43,9 +52,7 @@ export async function GET() {
     xml += "</urlset>";
 
     return new Response(xml, {
-      headers: {
-        "Content-Type": "application/xml",
-      },
+      headers: { "Content-Type": "application/xml" },
     });
   } catch (error) {
     console.error("Webseries sitemap error:", error);

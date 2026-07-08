@@ -19,7 +19,7 @@ const MAJOR_COUNTRIES = [
   "South Korea",
   "India",
   "China",
-  "Braizl", // kept original spelling for compatibility
+  "Brazil",
   "Mexico",
   "Russia",
   "Netherlands",
@@ -72,6 +72,26 @@ export default async function CountriesPage() {
 
   return (
     <main className="w-full min-h-screen bg-black text-white">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            "name": "Browse Movies by Country",
+            "description": "Browse and watch free movies and TV shows from around the world on MovieLab.",
+            "url": "https://movies.umairlab.com/countries",
+            "mainEntity": {
+              "@type": "ItemList",
+              "itemListElement": countries.map((c, i) => ({
+                "@type": "ListItem",
+                "position": i + 1,
+                "url": `https://movies.umairlab.com/discover/country-${c.name.toLowerCase().replace(/ /g, "-")}-${c.code}`,
+              })),
+            },
+          }),
+        }}
+      />
       <Navbar />
       <div className="px-4 lg:px-[5vw] md:py-[10vw] py-[40vw]">
         <h1 className="text-2xl lg:text-3xl font-comfortaa font-bold mb-8">

@@ -15,6 +15,7 @@
 
 # next.js
 /.next/
+/.commandcode/
 /out/
 
 # production

@@ -1,10 +1,9 @@
 import { Poppins, Comfortaa } from "next/font/google";
-import GoogleAnalytics from "./components/GoogleAnalytics";
-import MicrosoftClarity from "./components/MicrosoftClarity";
 import { AuthProvider } from "../context/AuthContext";
+import { AdProvider } from "@/context/AdContext";
 import SmoothScrollProvider from "./components/SmoothScrollProvider";
 import PageTransition from "./components/PageTransition";
-import Script from "next/script";
+import MicrosoftClarity from "./components/MicrosoftClarity";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -123,12 +122,6 @@ export default function RootLayout({ children }) {
           href="https://image.tmdb.org"
           crossOrigin="anonymous"
         />
-        <Script
-          async
-          src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-8754313345153121"
-          crossOrigin="anonymous"
-          strategy="afterInteractive"
-        />
       </head>
       <body className={`${poppins.variable} ${comfortaa.variable} antialiased`}>
         <script
@@ -148,22 +141,16 @@ export default function RootLayout({ children }) {
             }),
           }}
         />
-        <GoogleAnalytics />
-        <MicrosoftClarity />
-        {/* <Script
-          src="https://doubtfulimpatient.com/19/39/9b/19399ba474c25737727a403288572c40.js"
-          strategy="afterInteractive"
-        /> */}
-        {/* <Script src="https://pl28735289.effectivegatecpm.com/19/39/9b/19399ba474c25737727a403288572c40.js" /> 
-        <Script src="https://pl28735344.effectivegatecpm.com/59/57/4a/59574a153ab37dd51e9c1fc6d4347223.js" /> 
-        <Script src="https://pl28735344.profitablecpmratenetwork.com/59/57/4a/59574a153ab37dd51e9c1fc6d4347223.js" />
-        <Script async data-cfasync="false" src="https://pl28967245.profitablecpmratenetwork.com/057ba296e4201c8828400ac32a6e5d39/invoke.js" />  */}
 
+        <MicrosoftClarity />
+
+        <AdProvider>
         <AuthProvider>
           <SmoothScrollProvider>
             <PageTransition>{children}</PageTransition>
           </SmoothScrollProvider>
         </AuthProvider>
+        </AdProvider>
       </body>
     </html>
   );

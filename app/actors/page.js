@@ -40,8 +40,33 @@ export default async function Page() {
   }
 
   // Pre-render layout with HTML so bots can crawl actor profiles immediately
+  const collectionSchema = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": "Popular Actors & Directors",
+    "description": "Browse and discover popular actors, directors, producers, and writers on MovieLab.",
+    "url": "https://movies.umairlab.com/actors",
+    "mainEntity": {
+      "@type": "ItemList",
+      "itemListElement": popularInitial.map((actor, i) => ({
+        "@type": "ListItem",
+        "position": i + 1,
+        "url": `https://movies.umairlab.com/actor/${actor.name.toLowerCase().replace(/ /g, "-")}-${actor.id}`,
+        "item": {
+          "@type": "Person",
+          "name": actor.name,
+          "jobTitle": actor.known_for_department,
+        },
+      })),
+    },
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
+      />
       <div className="sr-only">
         <h2>Popular Actors List</h2>
         <ul>
