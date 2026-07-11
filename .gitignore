@@ -16,6 +16,7 @@
 # next.js
 /.next/
 /.commandcode/
+/.commandcode/taste/
 /out/
 
 # production
