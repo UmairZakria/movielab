@@ -4,6 +4,7 @@ import { AdProvider } from "@/context/AdContext";
 import SmoothScrollProvider from "./components/SmoothScrollProvider";
 import PageTransition from "./components/PageTransition";
 import MicrosoftClarity from "./components/MicrosoftClarity";
+import GoogleAnalytics from "./components/GoogleAnalytics";
 import MaintenanceGuard from "./components/MaintenanceGuard";
 import "./globals.css";
 
