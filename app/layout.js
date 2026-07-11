@@ -4,6 +4,7 @@ import { AdProvider } from "@/context/AdContext";
 import SmoothScrollProvider from "./components/SmoothScrollProvider";
 import PageTransition from "./components/PageTransition";
 import MicrosoftClarity from "./components/MicrosoftClarity";
+import MaintenanceGuard from "./components/MaintenanceGuard";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -46,6 +47,28 @@ export const metadata = {
     "horror movies online",
     "romantic comedies free",
     "sci-fi movies streaming",
+    "watch online free",
+    "stream free movies hd",
+    "free hd movie streaming",
+    "movies online free no signup",
+    "watch full movies online free",
+    "free movie download hd",
+    "new movies streaming",
+    "hollywood movies free",
+    "bollywood movies free",
+    "korean drama free online",
+    "watch web series free",
+    "free tv series streaming",
+    "movieslab",
+    "movies umairlab",
+    "watch z 1969 online free",
+    "cuerpos locos watch online free",
+    "slanted 2026 full hd free",
+    "watch the revolutionaries online free",
+    "hawking movie 2004 free",
+    "watch citation 2020 online free",
+    "watch confessions 2010 online free",
+    "maspalomas movie streaming free",
   ],
   authors: [{ name: "Umair Lab" }],
   creator: "MovieLab",
@@ -147,7 +170,9 @@ export default function RootLayout({ children }) {
         <AdProvider>
         <AuthProvider>
           <SmoothScrollProvider>
+            <MaintenanceGuard>
             <PageTransition>{children}</PageTransition>
+            </MaintenanceGuard>
           </SmoothScrollProvider>
         </AuthProvider>
         </AdProvider>

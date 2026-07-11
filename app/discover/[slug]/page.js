@@ -167,12 +167,45 @@ export async function generateMetadata({ params, searchParams }) {
   }
 
   const yearSuffix = year ? ` (${year})` : "";
+  const fullTitle = `Watch Best ${title}${yearSuffix} Online | ${topTitles ? `Featuring ${topTitles} | ` : ""}MovieLab`;
+  const description = `Explore our curated selection of ${title}${yearSuffix}. ${topTitles ? `Watch hits like ${topTitles} and more. ` : ""}Stream in HD 1080p, download for free with zero ads on MovieLab.`;
 
   return {
-    title: `Watch Best ${title}${yearSuffix} Online | ${topTitles ? `Featuring ${topTitles} | ` : ""}MovieLab`,
-    description: `Explore our curated selection of ${title}${yearSuffix}. ${topTitles ? `Watch hits like ${topTitles} and more. ` : ""}Stream in HD 1080p, download for free with zero ads on MovieLab.`,
+    title: fullTitle,
+    description,
     alternates: {
       canonical: `https://movies.umairlab.com/discover/${slug}${year ? `?year=${year}` : ""}`,
+    },
+    openGraph: {
+      title: fullTitle,
+      description,
+      url: `https://movies.umairlab.com/discover/${slug}${year ? `?year=${year}` : ""}`,
+      siteName: "MovieLab",
+      images: [{
+        url: "https://movies.umairlab.com/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: `${title} - MovieLab`,
+      }],
+      type: "website",
+      locale: "en_US",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: fullTitle,
+      description,
+      images: ["https://movies.umairlab.com/og-image.jpg"],
+    },
+    robots: {
+      index: true,
+      follow: true,
+      googleBot: {
+        index: true,
+        follow: true,
+        "max-video-preview": -1,
+        "max-image-preview": "large",
+        "max-snippet": -1,
+      },
     },
   };
 }
@@ -182,8 +215,57 @@ export default async function Page({ params, searchParams }) {
   const { year } = (await searchParams) || {};
   const decodedSlug = decodeURIComponent(slug);
 
+  const data = await getDiscoveryData(slug, 1, year);
+
+  const capitals = {
+    hollywood: "Hollywood",
+    bollywood: "Bollywood",
+    korean: "Korean",
+    anime: "Anime",
+    japanese: "Japanese",
+  };
+
+  const mediaLabel = data.type === "all" ? "Movies & Series" : (data.type === "tv" ? "TV Series" : "Movies");
+
+  let pageTitle;
+  if (capitals[decodedSlug]) {
+    pageTitle = `${capitals[decodedSlug]} ${mediaLabel}`;
+  } else if (["trending","top-rated","popular","new-releases","hidden-gems","feel-good","web-series"].includes(decodedSlug)) {
+    const ct = { trending:"Trending Now","top-rated":"Top Rated",popular:"Popular Content","new-releases":"New Releases","hidden-gems":"Hidden Gems","feel-good":"Feel Good","web-series":"Must Watch Web Series" };
+    pageTitle = `${ct[decodedSlug] || "Discover"} ${mediaLabel}`;
+  } else if (decodedSlug.startsWith("actor-")) {
+    pageTitle = `${decodedSlug.split("-").slice(1,-1).map(p => p.charAt(0).toUpperCase()+p.slice(1)).join(" ")}'s ${mediaLabel}`;
+  } else if (decodedSlug.startsWith("country-")) {
+    pageTitle = `${decodedSlug.split("-").slice(1,-1).map(p => p.charAt(0).toUpperCase()+p.slice(1)).join(" ")} ${mediaLabel}`;
+  } else {
+    const parts = decodedSlug.split("-");
+    parts.pop();
+    pageTitle = `${parts.map(p => p.charAt(0).toUpperCase()+p.slice(1)).join(" ")} ${mediaLabel}`;
+  }
+
+  const collectionSchema = data.results?.length > 0 ? {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "name": pageTitle,
+    "url": `https://movies.umairlab.com/discover/${slug}${year ? `?year=${year}` : ""}`,
+    "mainEntity": {
+      "@type": "ItemList",
+      "itemListElement": data.results.slice(0, 10).map((item, i) => ({
+        "@type": "ListItem",
+        "position": i + 1,
+        "url": `https://movies.umairlab.com/movie/${(item.title || item.name || "").toLowerCase().replace(/[^\w]+/g, "-").replace(/--+/g, "-").replace(/^-|-$/g, "")}-${item.id}`
+      }))
+    }
+  } : null;
+
   return (
     <>
+      {collectionSchema && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
+        />
+      )}
       <DiscoverContent
         slug={slug}
         initialResults={[]}

@@ -20,7 +20,7 @@ export default function robots() {
       ],
       crawlDelay: 1,
     },
-    sitemap: ["https://movies.umairlab.com/sitemap.xml"],
+    sitemap: ["https://movies.umairlab.com/sitemap.xml", "https://movies.umairlab.com/actors.xml"],
     host: "https://movies.umairlab.com",
   };
 }

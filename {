@@ -1,0 +1,12 @@
+[eval]:1
+const mongoose = require('mongoose'); mongoose.connect(process.env.MONGODB_URI, { serverSelectionTimeoutMS: 8000, dbName: 'movielab' }).then(() = console.log('CONNECTED'); process.exit(0); }).catch(e = console.log('FAIL:', e.message.split('\n')[0]); process.exit(1); });
+                                                                                                                                              ^
+Parenthesized expression cannot be empty
+
+SyntaxError: Unexpected token ')'
+    at makeContextifyScript (node:internal/vm:194:14)
+    at compileScript (node:internal/process/execution:388:10)
+    at evalTypeScript (node:internal/process/execution:260:22)
+    at node:internal/main/eval_string:71:3
+
+Node.js v24.11.1

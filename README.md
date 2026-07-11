@@ -1,66 +1,91 @@
-# 🎬 MovieLab - High-Quality Streaming & Discovery
+# 🎬 MovieLab
 
-MovieLab is a modern, premium movie discovery and streaming web application built with **Next.js 15**, **Tailwind CSS**, and the **TMDB API**. It features a cinematic user experience with smooth transitions, dynamic content sliders, and full SEO optimization.
+Movie discovery and streaming platform. Browse trending movies and TV shows, view details, and watch via third-party embed providers. Built with **Next.js 16 (App Router)**, **React 19**, and **Tailwind CSS v4**.
 
-## ✨ Features
+## Features
 
-- **Dynamic Hero Slider**: Features trending movies with smooth cross-fade background transitions.
-- **Advanced Discovery**: Browse movies by genre, trending, top-rated, and dedicated hubs (Hollywood, Bollywood, Korean, etc.).
-- **Cinematic Experience**: YouTube-style movie details page with trailers, related content, and infinite scrolling.
-- **Smooth Transitions**: Refined page transitions using Framer Motion for a premium native app feel.
-- **Fully Responsive**: Optimized for all screen sizes, from mobile-first category tabs to desktop layouts.
-- **SEO Optimized**: Dynamic metadata for every page, including specific movie titles and OpenGraph previews for social sharing.
-- **Share & Link**: Custom YouTube-style share modal with social integration and clipboard copying.
+- **Movie/TV Discovery** — Browse by trending, top-rated, genre, country, studio, actor, and curated hubs (Hollywood, Bollywood, Korean, Anime)
+- **Detail Pages** — Movie/TV info with cast, crew, trailers, reviews, recommendations, and storyline
+- **Embed Player** — `/watch/[slug]` page with server switcher (4 embed providers), episode playlist for TV series, and fullscreen support
+- **Search** — Global search with suggestions via Navbar
+- **Watch Later & History** — localStorage-based saved list and watch history tracking
+- **Login System** — `/login` page with hardcoded credentials. Logged-in users get an ad-free experience; non-logged-in users get periodic popup ads on navigation
+- **SEO** — Dynamic `generateMetadata` on every page, JSON-LD structured data (Movie, TVSeries, Person, VideoObject, BreadcrumbList, CollectionPage), sitemap index with 3 sub-sitemaps, Open Graph + Twitter cards
+- **Analytics** — Microsoft Clarity session recording
+- **Smooth Scrolling** — Lenis + GSAP on desktop, CSS scroll-behavior on mobile
 
-## 🚀 Tech Stack
+## Tech Stack
 
-- **Framework**: [Next.js 15 (App Router)](https://nextjs.org/)
-- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
-- **Animations**: [Framer Motion](https://www.framer.com/motion/)
-- **Icons**: [Lucide React](https://lucide.dev/)
-- **Data Source**: [TMDB API](https://www.themoviedb.org/documentation/api)
-- **HTTP Client**: [Axios](https://axios-http.com/)
+| Layer | Technology |
+|-------|-----------|
+| Framework | Next.js 16 (App Router) |
+| UI | React 19, Tailwind CSS v4 |
+| Animations | Framer Motion, GSAP, Lenis |
+| Icons | Lucide React |
+| Data Source | TMDB API (via axios + native fetch) |
+| Carousel | react-slick |
+| Analytics | Microsoft Clarity |
 
-## 🛠️ Getting Started
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/yourusername/movielab.git
-cd movielab
-```
-
-### 2. Install dependencies
+## Getting Started
 
 ```bash
 npm install
 ```
 
-### 3. Environment Setup
-
-Create a `.env.local` file in the root directory and add your TMDB API credentials:
+Create `.env.local`:
 
 ```env
-NEXT_PUBLIC_TMDB_KEY=your_tmdb_api_key_here
+NEXT_PUBLIC_TMDB_KEY=your_tmdb_api_key
 NEXT_PUBLIC_TMDB_BASE_URL=https://api.themoviedb.org/3
 ```
 
-### 4. Run the development server
+Run:
 
 ```bash
-npm run dev
+npm run dev       # Development
+npm run build     # Production build
+npm start         # Start production server
 ```
 
-Open [http://localhost:3000](http://localhost:3000) to view the app!
+## Project Structure
 
-## 📸 Screenshots
+```
+app/
+├── actors/           # Actor listings + profiles
+├── components/       # Shared UI (Navbar, Hero, MovieRow, Reviews, modals, etc.)
+├── contact/          # Static pages (about, contact, privacy)
+├── countries/        # Browse by country
+├── discover/[slug]/  # Genre/hub filtering pages
+├── history/          # Watch history
+├── login/            # Admin login
+├── movie/[slug]/     # Movie/TV detail pages
+├── search/[query]/   # Search results
+├── studio/[id]/      # Studio/company pages
+├── watch/[slug]/     # Video player (embed)
+├── watch-later/      # Saved list
+├── sitemap.xml/      # Sitemap index
+├── movies.xml/       # Movie sitemap
+├── webseries.xml/    # TV sitemap
+├── static.xml/       # Static pages sitemap
+├── utils/            # Analytics helpers
+├── layout.js         # Root layout
+├── page.js           # Homepage
+├── globals.css       # Tailwind v4 + theme
+├── robots.js         # robots.txt
+context/
+└── AuthContext.js    # Watch Later state
+└── AdContext.js      # Login + ad injection
+lib/
+└── studiosData.js    # Studio directory data
+```
 
-_(Add your screenshots or demo gif here)_
+## Login
 
-## 📝 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+- **URL**: `/login`
+- **Username**: `Rathat`
+- **Password**: `Rathat@@4321`
+- Logged-in users bypass ad popups. Session persists in localStorage.
 
 ---
 
-Made with ❤️ by [Umair](https://umairlab.com) at **.umairlab**
+Made by [Umair](https://umairlab.com)

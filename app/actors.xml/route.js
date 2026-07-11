@@ -2,18 +2,17 @@ const TMDB_BASE_URL = process.env.NEXT_PUBLIC_TMDB_BASE_URL;
 const API_KEY = process.env.NEXT_PUBLIC_TMDB_KEY;
 const EXTERNAL_DATA_URL = "https://movies.umairlab.com";
 
-const createSlug = (title, id, type) => {
-  if (!title) return id;
-  const prefix = type === "tv" ? "tv-" : "";
-  return `${prefix}${title.toLowerCase().replace(/[^\w-]+/g, "")}-${id}`;
+const createSlug = (name, id) => {
+  if (!name) return `actor-${id}`;
+  return `${name.toLowerCase().replace(/[^\w-]+/g, "-").replace(/--+/g, "-").replace(/^-|-$/g, "")}-${id}`;
 };
 
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-async function fetchPage(i) {
-  await sleep(i * 200); // Stagger requests 200ms apart to avoid rate limiting
+async function fetchPage(page) {
+  await sleep(page * 200);
   const res = await fetch(
-    `${TMDB_BASE_URL}/discover/movie?api_key=${API_KEY}&sort_by=popularity.desc&primary_release_date.gte=2000-01-01&page=${i}`,
+    `${TMDB_BASE_URL}/person/popular?api_key=${API_KEY}&language=en-US&page=${page}`,
   );
   if (!res.ok) return [];
   const data = await res.json();
@@ -29,7 +28,7 @@ export async function GET() {
     }
 
     const results = await Promise.allSettled(promises);
-    const movies = results
+    const actors = results
       .filter((r) => r.status === "fulfilled")
       .flatMap((r) => r.value);
 
@@ -37,15 +36,15 @@ export async function GET() {
     xml += '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
 
     const seen = new Set();
-    movies.forEach((item) => {
-      if (seen.has(item.id)) return;
-      seen.add(item.id);
-      const slug = createSlug(item.title, item.id, "movie");
+    actors.forEach((actor) => {
+      if (!actor.id || seen.has(actor.id)) return;
+      seen.add(actor.id);
+      const slug = createSlug(actor.name, actor.id);
       xml += "  <url>\n";
-      xml += `    <loc>${EXTERNAL_DATA_URL}/movie/${slug}</loc>\n`;
+      xml += `    <loc>${EXTERNAL_DATA_URL}/actor/${slug}</loc>\n`;
       xml += `    <lastmod>${new Date().toISOString().split("T")[0]}</lastmod>\n`;
-      xml += "    <changefreq>weekly</changefreq>\n";
-      xml += "    <priority>0.8</priority>\n";
+      xml += "    <changefreq>monthly</changefreq>\n";
+      xml += "    <priority>0.6</priority>\n";
       xml += "  </url>\n";
     });
 
@@ -55,7 +54,7 @@ export async function GET() {
       headers: { "Content-Type": "application/xml" },
     });
   } catch (error) {
-    console.error("Movies sitemap error:", error);
+    console.error("Actors sitemap error:", error);
     return new Response("Internal Server Error", { status: 500 });
   }
 }

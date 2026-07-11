@@ -10,6 +10,9 @@ export async function generateMetadata({ params }) {
   return {
     title: title,
     description: description,
+    alternates: {
+      canonical: `https://movies.umairlab.com/search/${query}`,
+    },
     openGraph: {
       title: title,
       description: description,

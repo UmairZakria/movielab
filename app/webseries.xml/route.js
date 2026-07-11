@@ -22,7 +22,7 @@ async function fetchPage(i) {
 
 export async function GET() {
   try {
-    const totalPages = 50;
+    const totalPages = 100;
     const promises = [];
     for (let i = 1; i <= totalPages; i++) {
       promises.push(fetchPage(i));
@@ -43,7 +43,7 @@ export async function GET() {
       const slug = createSlug(item.name, item.id, "tv");
       xml += "  <url>\n";
       xml += `    <loc>${EXTERNAL_DATA_URL}/movie/${slug}</loc>\n`;
-      xml += `    <lastmod>${item.first_air_date || "2026-01-01"}</lastmod>\n`;
+      xml += `    <lastmod>${new Date().toISOString().split("T")[0]}</lastmod>\n`;
       xml += "    <changefreq>weekly</changefreq>\n";
       xml += "    <priority>0.8</priority>\n";
       xml += "  </url>\n";

@@ -1,10 +1,9 @@
 export async function GET() {
   const EXTERNAL_DATA_URL = "https://movies.umairlab.com";
 
-  const sitemaps = ["static.xml", "movies.xml", "webseries.xml"];
+  const sitemaps = ["static.xml", "movies.xml", "webseries.xml", "actors.xml"];
 
-  // Fixed date to avoid constant re-crawl churn
-  const lastmod = "2026-01-01T00:00:00Z";
+  const lastmod = new Date().toISOString();
 
   let xml = '<?xml version="1.0" encoding="UTF-8"?>\n';
   xml += '<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n';
@@ -19,8 +18,6 @@ export async function GET() {
   xml += "</sitemapindex>";
 
   return new Response(xml, {
-    headers: {
-      "Content-Type": "application/xml",
-    },
+    headers: { "Content-Type": "application/xml" },
   });
 }

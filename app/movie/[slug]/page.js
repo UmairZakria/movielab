@@ -195,7 +195,7 @@ export default async function Page({ params }) {
         "name": initialData.title,
         "description": initialData.overview || "",
         "image": initialData.poster_path ? `https://image.tmdb.org/t/p/w500${initialData.poster_path}` : undefined,
-        "dateCreated": initialData.release_date,
+        "datePublished": initialData.release_date,
         "director": initialData.credits?.crew
           ?.filter(c => c.job === "Director")
           .map(d => ({ "@type": "Person", "name": d.name })),
@@ -234,6 +234,45 @@ export default async function Page({ params }) {
     ]
   };
 
+  const faqMarkup = initialData ? {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    "mainEntity": [
+      {
+        "@type": "Question",
+        "name": `Where can I watch ${title} (${year}) online for free?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `You can watch ${title} (${year}) online for free in HD 1080p on MovieLab. No registration or subscription required. Simply visit the MovieLab website and search for ${title} to start streaming instantly.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": `Is ${title} available in HD quality?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `Yes, ${title} is available to stream in Full HD 1080p quality on MovieLab with English subtitles and fast buffering.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": `Can I download ${title} for free?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `MovieLab offers free streaming of ${title} (${year}) in HD quality. You can watch online instantly without any downloads or sign-ups.`
+        }
+      },
+      {
+        "@type": "Question",
+        "name": `Who stars in ${title}?`,
+        "acceptedAnswer": {
+          "@type": "Answer",
+          "text": `${title} features ${initialData.credits?.cast?.slice(0, 3).map(a => a.name).join(", ") || "a talented cast"}${initialData.credits?.cast?.length > 3 ? " and many more" : ""}.`
+        }
+      }
+    ]
+  } : null;
+
   return (
     <>
       {schemaMarkup && (
@@ -246,6 +285,12 @@ export default async function Page({ params }) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbMarkup) }}
       />
+      {faqMarkup && (
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(faqMarkup) }}
+        />
+      )}
       <MovieContent
         initialData={initialData}
         slug={slug}

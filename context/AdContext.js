@@ -4,56 +4,50 @@ import { usePathname } from "next/navigation";
 
 const AdContext = createContext();
 
-const AD_URLS = [
-  "https://youtu.be/Y9dwd5xzTzM",
-  "https://youtube.com/shorts/aNzrEmXT970?feature=share",
-  "https://youtu.be/kI7OZL8UGiE",
-  "https://youtube.com/shorts/KI6Z_J4PJ1I?feature=share",
-  "https://youtu.be/Lg7vNJHIaDE",
-  "https://youtube.com/shorts/piSwV8-MVn0?feature=share",
-  "https://youtu.be/mtFb7k570Rw",
-  "https://youtube.com/shorts/I1vdqW5Nh1A?feature=share",
-  "https://youtu.be/vmEPAscUgoA",
-];
-
-const STORAGE_KEY = "movielab_ad_logged_in";
 const VISIT_KEY = "movielab_ad_visit_count";
-
-// Pick a random threshold between 3 and 5 once per session
-function getThreshold() {
-  if (typeof window === "undefined") return 3;
-  const stored = sessionStorage.getItem("movielab_ad_threshold");
-  if (stored) return parseInt(stored, 10);
-  const threshold = Math.floor(Math.random() * 3) + 3; // 3, 4, or 5
-  sessionStorage.setItem("movielab_ad_threshold", String(threshold));
-  return threshold;
-}
+const TOKEN_KEY = "movielab_admin_token";
 
 export function AdProvider({ children }) {
   const [loggedIn, setLoggedIn] = useState(false);
   const [loaded, setLoaded] = useState(false);
+  const [config, setConfig] = useState({
+    enabled: true,
+    adUrls: [],
+    minThreshold: 3,
+    maxThreshold: 5,
+  });
   const pathname = usePathname();
   const lastPathRef = useRef(null);
-  const thresholdRef = useRef(3);
 
-  // Load login state + set random threshold on mount
+  // Load login state + fetch config on mount
   useEffect(() => {
-    try {
-      const stored = localStorage.getItem(STORAGE_KEY);
-      if (stored === "true") setLoggedIn(true);
-    } catch (e) {}
-    thresholdRef.current = getThreshold();
-    setLoaded(true);
+    const load = async () => {
+      try {
+        const token = localStorage.getItem(TOKEN_KEY);
+        if (token) setLoggedIn(true);
+      } catch (e) {}
+      try {
+        const res = await fetch("/api/admin/ad-config");
+        if (res.ok) {
+          const data = await res.json();
+          if (data.adUrls.length > 0) setConfig(data);
+        }
+      } catch (e) {
+        // fallback to defaults
+      }
+      setLoaded(true);
+    };
+    load();
   }, []);
 
   // Track navigations and trigger ads for non-logged-in users
   useEffect(() => {
     if (!loaded) return;
     if (loggedIn) return;
-    if (pathname === "/login") return;
+    if (pathname === "/login" || pathname === "/admin") return;
     if (pathname === lastPathRef.current) return;
+    if (!config.enabled || config.adUrls.length === 0) return;
 
-    // First navigation event that changes the page
     if (lastPathRef.current !== null) {
       let count = 0;
       try {
@@ -61,17 +55,20 @@ export function AdProvider({ children }) {
       } catch (e) {}
       count += 1;
 
-      if (count >= thresholdRef.current) {
-        const url = AD_URLS[Math.floor(Math.random() * AD_URLS.length)];
+      const threshold =
+        Math.floor(
+          Math.random() *
+            (config.maxThreshold - config.minThreshold + 1),
+        ) + config.minThreshold;
+
+      if (count >= threshold) {
+        const url =
+          config.adUrls[Math.floor(Math.random() * config.adUrls.length)];
         const win = window.open(url, "_blank");
-        if (!win) {
-          window.location.href = url;
-        }
+        if (!win) window.location.href = url;
         try {
           localStorage.setItem(VISIT_KEY, "0");
         } catch (e) {}
-        // Re-roll threshold for next cycle
-        thresholdRef.current = getThreshold();
       } else {
         try {
           localStorage.setItem(VISIT_KEY, String(count));
@@ -80,31 +77,52 @@ export function AdProvider({ children }) {
     }
 
     lastPathRef.current = pathname;
-  }, [pathname, loaded, loggedIn]);
+  }, [pathname, loaded, loggedIn, config]);
 
-  const login = useCallback((username, password) => {
-    if (username === "Rathat" && password === "Rathat@@4321") {
+  // Track page views for analytics (all visitors, not just logged in)
+  useEffect(() => {
+    if (!loaded) return;
+    if (pathname === "/login" || pathname === "/admin") return;
+    if (pathname === lastPathRef.current) return;
+
+    // Fire and forget - silently track page view
+    fetch("/api/track/pageview", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ path: pathname }),
+    }).catch(() => {});
+  }, [pathname, loaded]);
+
+  const login = useCallback(async (username, password) => {
+    try {
+      const res = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username, password }),
+      });
+      if (!res.ok) return false;
+      const { token } = await res.json();
       setLoggedIn(true);
       try {
-        localStorage.setItem(STORAGE_KEY, "true");
+        localStorage.setItem(TOKEN_KEY, token);
         localStorage.removeItem(VISIT_KEY);
       } catch (e) {}
       return true;
+    } catch {
+      return false;
     }
-    return false;
   }, []);
 
   const logout = useCallback(() => {
     setLoggedIn(false);
     try {
-      localStorage.removeItem(STORAGE_KEY);
+      localStorage.removeItem(TOKEN_KEY);
       localStorage.removeItem(VISIT_KEY);
-      sessionStorage.removeItem("movielab_ad_threshold");
     } catch (e) {}
   }, []);
 
   return (
-    <AdContext.Provider value={{ loggedIn, login, logout, loaded }}>
+    <AdContext.Provider value={{ loggedIn, login, logout, loaded, config }}>
       {children}
     </AdContext.Provider>
   );

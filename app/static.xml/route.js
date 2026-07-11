@@ -36,7 +36,7 @@ export async function GET() {
     mainPages.forEach((page) => {
       xml += "  <url>\n";
       xml += `    <loc>${EXTERNAL_DATA_URL}${page.url}</loc>\n`;
-      xml += `    <lastmod>2026-01-01</lastmod>\n`;
+      xml += `    <lastmod>${new Date().toISOString().split("T")[0]}</lastmod>\n`;
       xml += `    <changefreq>${page.changefreq}</changefreq>\n`;
       xml += `    <priority>${page.priority}</priority>\n`;
       xml += "  </url>\n";
@@ -46,7 +46,7 @@ export async function GET() {
     hubs.forEach((hub) => {
       xml += "  <url>\n";
       xml += `    <loc>${EXTERNAL_DATA_URL}/discover/${hub.slug}</loc>\n`;
-      xml += `    <lastmod>2026-01-01</lastmod>\n`;
+      xml += `    <lastmod>${new Date().toISOString().split("T")[0]}</lastmod>\n`;
       xml += "    <changefreq>weekly</changefreq>\n";
       xml += "    <priority>0.9</priority>\n";
       xml += "  </url>\n";
@@ -57,7 +57,7 @@ export async function GET() {
       const slug = `${genre.name.toLowerCase().replace(/ /g, "-")}-${genre.id}`;
       xml += "  <url>\n";
       xml += `    <loc>${EXTERNAL_DATA_URL}/discover/${slug}</loc>\n`;
-      xml += `    <lastmod>2026-01-01</lastmod>\n`;
+      xml += `    <lastmod>${new Date().toISOString().split("T")[0]}</lastmod>\n`;
       xml += "    <changefreq>weekly</changefreq>\n";
       xml += "    <priority>0.8</priority>\n";
       xml += "  </url>\n";

@@ -241,7 +241,7 @@ const ActorsClient = ({ trendingInitial, popularInitial }) => {
       <Navbar />
 
       {/* Hero Section */}
-      <div className="relative pt-54 lg:pt-32   pb-20 px-4  lg:px-[3vw]   overflow-hidden">
+      <div className="relative pt-36 lg:pt-32 pb-20 px-4 lg:px-[3vw] overflow-hidden">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full overflow-hidden opacity-20 pointer-events-none">
           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-primary/20 via-transparent to-black" />
         </div>
@@ -397,7 +397,7 @@ const ActorsClient = ({ trendingInitial, popularInitial }) => {
 
           {!loading && !isSearching && displayList.length === 0 && (
             <div className="py-20 text-center w-full">
-              <User className="mx-auto text-gray-800 mb-4" size={64} />
+              <User className="mx-auto text-gray-600 mb-4" size={64} />
               <h3 className="text-xl font-bold text-gray-500 text-white">No actors found</h3>
               <p className="text-gray-600">Try adjusting your filters or search query</p>
             </div>

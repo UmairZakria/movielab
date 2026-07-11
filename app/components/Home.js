@@ -515,7 +515,7 @@ const Home = ({ initialData = {} }) => {
           <div className=" mx-auto">
             <h3 className="text-3xl   text-white mb-8">
               Explore{" "}
-              <span className="text-priary font-comfortaa text-transparent bg-gradient-to-tr from-[#b622a7] to-primary bg-clip-text ">
+              <span className="text-primary font-comfortaa text-transparent bg-gradient-to-tr from-[#b622a7] to-primary bg-clip-text ">
                 Movieslab
               </span>
             </h3>
