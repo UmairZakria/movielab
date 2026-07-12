@@ -17,6 +17,7 @@
 /.next/
 /.commandcode/
 /.commandcode/taste/
+.commandcode
 /out/
 
 # production

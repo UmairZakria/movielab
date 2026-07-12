@@ -79,13 +79,6 @@ lib/
 └── studiosData.js    # Studio directory data
 ```
 
-## Login
 
-- **URL**: `/login`
-- **Username**: `Rathat`
-- **Password**: `Rathat@@4321`
-- Logged-in users bypass ad popups. Session persists in localStorage.
-
----
 
 Made by [Umair](https://umairlab.com)
