@@ -292,6 +292,13 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie", initialServe
       return `${server.value}/embed/movie/${mId}?color=2eafff&autoPlay=true`;
     }
 
+    if (server.id === "vidsrc_sbs") {
+      if (type === "tv") {
+        return `${server.value}/tv/${mId}/${sea}/${epi}?color=58b4ff`;
+      }
+      return `${server.value}/movie/${mId}?color=58b4ff`;
+    }
+
     if (server.id === "vidlink") {
       // vidlink.pro endpoints with custom color themes matching MovieLab design (--color-primary: #2eafff, --color-secondary: #58b4ff)
       if (type === "tv") {
@@ -332,7 +339,7 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie", initialServe
     { name: "Server 1", value: "https://vidlink.pro", id: "vidlink" },
     { name: "Server 2", value: "https://multiembed.mov/", id: "multiembed" },
     { name: "Server 3", value: "https://vidking.net/", id: "vidking" },
-    { name: "Server 4", value: "https://vidsrc.cc/v2/embed", id: "vidsrc_cc" },
+    { name: "Server 4", value: "https://vidsrc.sbs/embed", id: "vidsrc_sbs" },
     // { name: "Server 5", value: "https://www.vidking.net", id: "server5" },
   ];
   const [selectedServer, setSelectedServer] = useState(() => {

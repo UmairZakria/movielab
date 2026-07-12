@@ -7,3 +7,6 @@
 
 # login
 - When MongoDB connection fails (Atlas IP not whitelisted), fall back to hardcoded credentials rathat / Rathat@@4321 so the app works immediately. Confidence: 0.90
+
+# design
+- Use `58b4ff` as the website accent color (not `e50914` Netflix red) for server embed URL color parameters. Confidence: 0.75
