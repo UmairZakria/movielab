@@ -30,10 +30,10 @@ const MAJOR_COUNTRIES = [
 ];
 
 export const metadata = {
-  title: "Watch Movies & TV Shows by Country | MovieLab",
-  description: "Browse and watch free movies and TV shows from around the world. Stream in HD 1080p from United States, United Kingdom, Korea, India, and more on MovieLab (movieslab.io).",
+  title: "Browse Movies & TV Shows by Country",
+  description: "Browse free movies and TV shows from around the world on Movieslab. Stream in HD from United States, United Kingdom, Korea, India, and more.",
   alternates: {
-    canonical: "https://movies.umairlab.com/countries",
+    canonical: "https://movieslab.online/countries",
   },
 };
 
@@ -79,14 +79,14 @@ export default async function CountriesPage() {
             "@context": "https://schema.org",
             "@type": "CollectionPage",
             "name": "Browse Movies by Country",
-            "description": "Browse and watch free movies and TV shows from around the world on MovieLab.",
-            "url": "https://movies.umairlab.com/countries",
+            "description": "Browse and watch free movies and TV shows from around the world on Movieslab.",
+            "url": "https://movieslab.online/countries",
             "mainEntity": {
               "@type": "ItemList",
               "itemListElement": countries.map((c, i) => ({
                 "@type": "ListItem",
                 "position": i + 1,
-                "url": `https://movies.umairlab.com/discover/country-${c.name.toLowerCase().replace(/ /g, "-")}-${c.code}`,
+                "url": `https://movieslab.online/discover/country-${c.name.toLowerCase().replace(/ /g, "-")}-${c.code}`,
               })),
             },
           }),
@@ -95,7 +95,7 @@ export default async function CountriesPage() {
       <Navbar />
       <div className="px-4 lg:px-[5vw] md:py-[10vw] py-[40vw]">
         <h1 className="text-2xl lg:text-3xl font-comfortaa font-bold mb-8">
-          Browse by Country
+          Browse Movies by Country
         </h1>
         {countries.length === 0 ? (
           <div className="py-20 text-center text-gray-500 italic">

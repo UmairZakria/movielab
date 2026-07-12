@@ -24,19 +24,19 @@ export async function generateMetadata({ params }) {
     const department = data.known_for_department || "Actor";
     const canonicalSlug = `${name.toLowerCase().replace(/[^\w]+/g, "-").replace(/--+/g, "-").replace(/^-|-$/g, "")}-${id}`;
 
-    const description = `${name} is a ${department}. ${bio.substring(0, 200)}... Watch ${name}'s movies and series online free on MovieLab.`;
+    const description = `${name} is a ${department}. ${bio.substring(0, 200)}... Watch ${name}'s movies and series online free on Movieslab.`;
 
     return {
-      title: `${name} - Movies, TV Series & Biography | MovieLab`,
+      title: `${name} - Movies & TV Series`,
       description,
       alternates: {
-        canonical: `https://movies.umairlab.com/actor/${canonicalSlug}`,
+        canonical: `https://movieslab.online/actor/${canonicalSlug}`,
       },
       openGraph: {
-        title: `${name} | MovieLab - Biography, Movies & TV Shows`,
+        title: `${name} | Movieslab`,
         description,
-        url: `https://movies.umairlab.com/actor/${canonicalSlug}`,
-        siteName: "MovieLab",
+        url: `https://movieslab.online/actor/${canonicalSlug}`,
+        siteName: "Movieslab",
         images: primaryImage
           ? [{
               url: `https://image.tmdb.org/t/p/w500${primaryImage}`,
@@ -45,17 +45,17 @@ export async function generateMetadata({ params }) {
               alt: `${name} profile photo`,
             }]
           : [{
-              url: "https://movies.umairlab.com/og-image.jpg",
+              url: "https://movieslab.online/og-image.jpg",
               width: 1200,
               height: 630,
-              alt: "MovieLab - Free Movie Streaming",
+              alt: "Movieslab - Free Movie Streaming",
             }],
         type: "profile",
         locale: "en_US",
       },
       twitter: {
         card: "summary_large_image",
-        title: `${name} | MovieLab`,
+        title: `${name} | Movieslab`,
         description,
         images: primaryImage ? [`https://image.tmdb.org/t/p/w500${primaryImage}`] : [],
       },
@@ -70,13 +70,9 @@ export async function generateMetadata({ params }) {
           "max-snippet": -1,
         },
       },
-      verification: {
-        google: "VBh8Z5n2gYt-blPxDnyzDu5KU9JOBHYSdaEZmv-s3bk",
-        yandex: "03632b5675884ef5",
-      },
     };
   } catch (error) {
-    return { title: "Actor Details | MovieLab" };
+    return { title: "Actor Details | Movieslab" };
   }
 }
 
@@ -107,7 +103,7 @@ export default async function Page({ params }) {
       "@type": "Place",
       "name": initialData.place_of_birth
     } : undefined,
-    "url": `https://movies.umairlab.com/actor/${slug}`,
+    "url": `https://movieslab.online/actor/${slug}`,
     "sameAs": initialData.external_ids ? [
       initialData.external_ids.imdb_id ? `https://www.imdb.com/name/${initialData.external_ids.imdb_id}` : null,
       initialData.external_ids.instagram_id ? `https://www.instagram.com/${initialData.external_ids.instagram_id}` : null,
@@ -124,19 +120,19 @@ export default async function Page({ params }) {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://movies.umairlab.com"
+        "item": "https://movieslab.online"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Actors",
-        "item": "https://movies.umairlab.com/actors"
+        "item": "https://movieslab.online/actors"
       },
       {
         "@type": "ListItem",
         "position": 3,
         "name": name,
-        "item": `https://movies.umairlab.com/actor/${slug}`
+        "item": `https://movieslab.online/actor/${slug}`
       }
     ]
   };

@@ -3,22 +3,22 @@ import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
 export const metadata = {
-  title: "Privacy Policy | MovieLab",
-  description: "MovieLab privacy policy — how we collect, use, and protect your personal information when you use our movie streaming platform.",
+  title: "Privacy Policy",
+  description: "Movieslab privacy policy — how we collect, use, and protect your personal information when you use our movie streaming platform.",
   alternates: {
-    canonical: "https://movies.umairlab.com/privacy",
+    canonical: "https://movieslab.online/privacy",
   },
   openGraph: {
-    title: "Privacy Policy | MovieLab",
-    description: "MovieLab privacy policy — how we collect, use, and protect your personal information.",
-    url: "https://movies.umairlab.com/privacy",
-    siteName: "MovieLab",
+    title: "Privacy Policy | Movieslab",
+    description: "Movieslab privacy policy — how we collect, use, and protect your personal information.",
+    url: "https://movieslab.online/privacy",
+    siteName: "Movieslab",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Privacy Policy | MovieLab",
-    description: "MovieLab privacy policy — how we collect, use, and protect your personal information.",
+    title: "Privacy Policy | Movieslab",
+    description: "Movieslab privacy policy — how we collect, use, and protect your personal information.",
   },
 };
 
@@ -40,7 +40,7 @@ export default function PrivacyPage() {
           <section>
             <h2 className="text-2xl font-semibold text-white mb-4">1. Introduction</h2>
             <p>
-              Welcome to MovieLab (accessible at https://movies.umairlab.com/). 
+              Welcome to Movieslab (accessible at https://movieslab.online/).
               We are committed to protecting your privacy and handling any personal information you share with us responsibly.
             </p>
             <p className="mt-3">
@@ -111,7 +111,7 @@ export default function PrivacyPage() {
             </p>
             <ul className="list-disc pl-6 mt-2 space-y-1">
               <li>To comply with legal obligations, court orders, or valid government requests</li>
-              <li>To protect the rights, property, or safety of MovieLab, our users, or the public</li>
+              <li>To protect the rights, property, or safety of Movieslab, our users, or the public</li>
               <li>In the event of a merger, acquisition, or sale of assets (with notice where required)</li>
             </ul>
             <p className="mt-4">
@@ -180,7 +180,7 @@ export default function PrivacyPage() {
             </p>
             <p className="mt-3">
               Email: umairzakria6@gmail.com<br />
-              Website: https://movies.umairlab.com/
+              Website: https://movieslab.online/
             </p>
           </section>
 

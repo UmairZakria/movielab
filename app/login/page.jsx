@@ -46,7 +46,7 @@ export default function LoginPage() {
             className="bg-zinc-900/60 border border-zinc-800 rounded-2xl p-8 space-y-6"
           >
             <div className="text-center">
-              <h1 className="text-2xl font-comfortaa font-bold">MovieLab</h1>
+              <h1 className="text-2xl font-comfortaa font-bold">Movieslab</h1>
               <p className="text-zinc-400 text-sm mt-1">Admin Login</p>
             </div>
 

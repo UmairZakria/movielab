@@ -3,23 +3,23 @@ import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
 
 export const metadata = {
-  title: "About MovieLab | Free HD Streaming Platform",
-  description: "MovieLab is a free movie and TV series discovery platform. Browse trending titles, explore genres, find hidden gems — no registration required.",
+  title: "About Movieslab",
+  description: "Movieslab is a free movie and TV series discovery platform. Browse trending titles, explore genres, find hidden gems — no registration required.",
   alternates: {
-    canonical: "https://movies.umairlab.com/about",
+    canonical: "https://movieslab.online/about",
   },
   openGraph: {
-    title: "About MovieLab | Free HD Streaming Platform",
-    description: "MovieLab helps you discover trending movies, TV series, and hidden gems — completely free, no sign-up needed.",
-    url: "https://movies.umairlab.com/about",
-    siteName: "MovieLab",
+    title: "About Movieslab - Free HD Streaming",
+    description: "Movieslab helps you discover trending movies, TV series, and hidden gems — completely free, no sign-up needed.",
+    url: "https://movieslab.online/about",
+    siteName: "Movieslab",
     type: "website",
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "About MovieLab | Free HD Streaming Platform",
-    description: "MovieLab helps you discover trending movies, TV series, and hidden gems — completely free, no sign-up needed.",
+    title: "About Movieslab - Free HD Streaming",
+    description: "Movieslab helps you discover trending movies, TV series, and hidden gems — completely free, no sign-up needed.",
   },
 };
 
@@ -30,7 +30,7 @@ export default function AboutPage() {
 
       <div className="mx-auto font-poppins">
         <h1 className="text-4xl  font-comfortaa font-semibold mt-12 mb-8 text-center">
-          About MovieLab
+          About Movieslab
         </h1>
 
         <p className="text-zinc-400 text-sm mb-10 text-center">
@@ -39,9 +39,9 @@ export default function AboutPage() {
 
         <div className="prose prose-invert prose-zinc max-w-none space-y-8 text-zinc-300 leading-relaxed">
           <section>
-            <h2 className="text-2xl font-medium text-white mb-4">Welcome to MovieLab</h2>
+            <h2 className="text-2xl font-medium text-white mb-4">Welcome to Movieslab</h2>
             <p>
-              MovieLab is your go-to destination for discovering trending movies, TV series, and timeless classics — all in one beautiful, easy-to-use platform.
+              Movieslab is your go-to destination for discovering trending movies, TV series, and timeless classics — all in one beautiful, easy-to-use platform.
             </p>
             <p className="mt-3">
               We help movie lovers explore what's hot right now, dive into their favorite genres, find hidden gems, and plan their next watch — completely free and without any login required.
@@ -51,7 +51,7 @@ export default function AboutPage() {
           <section>
             <h2 className="text-2xl font-medium text-white mb-4">Our Mission</h2>
             <p>
-              At MovieLab, we believe everyone should have easy access to information about the world of cinema. Whether you're looking for the latest blockbuster, a feel-good romance, gripping horror, thought-provoking indie, or nostalgic classics, we're here to make discovery simple, fast, and enjoyable.
+              At Movieslab, we believe everyone should have easy access to information about the world of cinema. Whether you're looking for the latest blockbuster, a feel-good romance, gripping horror, thought-provoking indie, or nostalgic classics, we're here to make discovery simple, fast, and enjoyable.
             </p>
             <p className="mt-3">
               We curate and present high-quality movie and series data so you can spend less time searching and more time watching.
@@ -77,20 +77,20 @@ export default function AboutPage() {
           <section>
             <h2 className="text-2xl font-medium text-white mb-4">Who We Are</h2>
             <p>
-              MovieLab is proudly built and maintained by <strong>Umair</strong> from <strong>Umair Lab</strong> — a passionate full-stack developer and digital creator based in Lahore, Pakistan.
+              Movieslab is proudly built and maintained by <strong>Umair</strong> from <strong>Umair Lab</strong> — a passionate full-stack developer and digital creator based in Lahore, Pakistan.
             </p>
             <p className="mt-3">
               This project was created as a modern showcase of clean UI/UX, efficient data handling, and love for cinema. It's built with cutting-edge tools like React, Next.js, Tailwind CSS, and aggregates publicly available movie metadata to bring you the best possible experience.
             </p>
             <p className="mt-3">
-              Umair Lab specializes in creating beautiful, high-performance web applications — and MovieLab is one of our personal favorites.
+              Umair Lab specializes in creating beautiful, high-performance web applications — and Movieslab is one of our personal favorites.
             </p>
           </section>
 
           <section>
             <h2 className="text-2xl font-medium text-white mb-4">Important Disclaimer</h2>
             <p>
-              MovieLab is a <strong>discovery and information platform</strong>. We do not host, upload, stream, or distribute any video content ourselves.
+              Movieslab is a <strong>discovery and information platform</strong>. We do not host, upload, stream, or distribute any video content ourselves.
             </p>
             <p className="mt-3">
               All links, embeds, or streaming options (if present) are provided from third-party sources and are intended for users in regions where such access is legal. We do not control or endorse the content of external sites.
@@ -106,8 +106,8 @@ export default function AboutPage() {
               Have feedback, suggestions, or just want to say hi? We'd love to hear from you!
             </p>
             <p className="mt-3">
-              Use the contact form on the site or reach out directly:<br />
-              Email: [your-email@example.com]<br />
+              Reach out directly:<br />
+              Email: umairzakria6@gmail.com<br />
               Website: https://www.umairlab.com/ (main portfolio)
             </p>
           </section>
@@ -115,7 +115,7 @@ export default function AboutPage() {
           <section>
             <h2 className="text-2xl font-medium text-white mb-4">Thank You</h2>
             <p>
-              Thanks for visiting MovieLab. Grab some popcorn, explore the collections, and enjoy the magic of movies!
+              Thanks for visiting Movieslab. Grab some popcorn, explore the collections, and enjoy the magic of movies!
             </p>
             <p className="mt-3 italic text-zinc-400">
               Happy watching! 🍿✨
@@ -123,7 +123,7 @@ export default function AboutPage() {
           </section>
 
           <p className="text-sm text-zinc-500 mt-12 pt-8 border-t border-zinc-800 text-center">
-            MovieLab is a non-commercial, passion project by Umair Lab. This page is for informational purposes only.
+            Movieslab is a non-commercial, passion project by Umair Lab. This page is for informational purposes only.
           </p>
         </div>
       </div>

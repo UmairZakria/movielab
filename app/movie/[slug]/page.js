@@ -49,58 +49,56 @@ export async function generateMetadata({ params }) {
       .map((actor) => actor.name)
       .join(", ");
 
-    const prefix = `Watch ${title} (${year})${director ? ` directed by ${director}` : ""} Full ${mediaType === "tv" ? "Series" : "Movie"} Online Free. `;
+    const prefix = `Watch ${title} (${year})${director ? ` directed by ${director}` : ""} full ${mediaType === "tv" ? "series" : "movie"} online free. `;
     const storyBrief = overview ? `${overview.substring(0, 120)}... ` : "";
     const castInfo = topActors ? `Starring ${topActors}. ` : "";
-    const genreInfo = `A ${genreNames} ${mediaType === "tv" ? "series" : "film"} with ${voteAverage.toFixed(1)}/10 rating from ${voteCount.toLocaleString()} votes. `;
-    const suffix = `Stream ${title} in HD 1080p on MovieLab (movieslab.io / movies umairlab) with zero ads, fast buffering, and no registration required. Watch free movies and web series online.`;
+    const genreInfo = `A ${genreNames} ${mediaType === "tv" ? "series" : "film"} with a ${voteAverage.toFixed(1)}/10 rating. `;
+    const suffix = `Stream in HD 1080p on Movieslab — free, no registration, no ads.`;
 
     let description = `${prefix}${storyBrief}${castInfo}${genreInfo}${suffix}`;
-    if (description.length > 320) {
-      description = description.substring(0, 317) + "...";
+    if (description.length > 200) {
+      description = description.substring(0, 197) + "...";
     }
 
     const titleStr = isTV
-      ? `Watch ${title} (${year}) Full TV Series Online Free HD | MovieLab`
-      : `Watch ${title} (${year}) Full Movie Free Online HD | MovieLab`;
+      ? `Watch ${title} (${year}) Full TV Series Free`
+      : `Watch ${title} (${year}) Full Movie Free`;
 
     return {
       title: titleStr,
       description: description,
       authors: director ? [director] : [],
-      creator: director || "MovieLab",
-      publisher: "MovieLab",
+      creator: director || "Movieslab",
+      publisher: "Movieslab",
       formatDetection: {
         email: false,
         address: false,
         telephone: false,
       },
-      metadataBase: new URL("https://movies.umairlab.com"),
       alternates: {
-        canonical: `https://movies.umairlab.com/movie/${slug}`,
+        canonical: `https://movieslab.online/movie/${slug}`,
       },
       openGraph: {
         title: titleStr,
         description: description,
-        url: `https://movies.umairlab.com/movie/${slug}`,
-        siteName: "MovieLab",
+        url: `https://movieslab.online/movie/${slug}`,
+        siteName: "Movieslab",
         images: [
           {
             url: `https://image.tmdb.org/t/p/original${backdrop}`,
             width: 1920,
             height: 1080,
-            alt: `Watch ${title} Full Movie HD Backdrop`,
+            alt: `${title} full movie backdrop`,
           },
           {
             url: `https://image.tmdb.org/t/p/w500${poster}`,
             width: 500,
             height: 750,
-            alt: `${title} Movie Poster`,
+            alt: `${title} movie poster`,
           },
         ],
         type: isTV ? "video.tv_show" : "video.movie",
         locale: "en_US",
-        countryName: "United States",
         videos: data.videos?.results?.find(
           (v) => v.type === "Trailer" && v.site === "YouTube",
         )
@@ -108,8 +106,8 @@ export async function generateMetadata({ params }) {
               {
                 url: `https://www.youtube.com/watch?v=${data.videos.results.find((v) => v.type === "Trailer" && v.site === "YouTube").key}`,
                 type: "text/html",
-                name: `${title} Official Trailer`,
-                description: `Watch the official trailer for ${title}`,
+                "name": `${title} Official Trailer`,
+                "description": `Watch the official trailer for ${title}`,
                 uploadDate: data.release_date || data.first_air_date,
               },
             ]
@@ -120,8 +118,6 @@ export async function generateMetadata({ params }) {
         title: titleStr,
         description: description,
         images: [`https://image.tmdb.org/t/p/original${backdrop}`],
-        creator: "@MovieLab",
-        site: "@MovieLab",
       },
       robots: {
         index: true,
@@ -134,16 +130,12 @@ export async function generateMetadata({ params }) {
           "max-snippet": -1,
         },
       },
-      verification: {
-        google: "VBh8Z5n2gYt-blPxDnyzDu5KU9JOBHYSdaEZmv-s3bk",
-        yandex: "03632b5675884ef5",
-      },
     };
   } catch (error) {
     return {
-      title: "Movie Details | MovieLab - Watch Movies Online Free",
+      title: "Watch Movies Free | Movieslab",
       description:
-        "Watch movies and TV shows online for free on MovieLab. Stream in HD quality with no ads and fast buffering.",
+        "Watch movies and TV shows online for free on Movieslab. Stream in HD quality with no ads.",
       robots: {
         index: true,
         follow: true,
@@ -217,19 +209,19 @@ export default async function Page({ params }) {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://movies.umairlab.com"
+        "item": "https://movieslab.online"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": isTV ? "TV Series" : "Movies",
-        "item": isTV ? "https://movies.umairlab.com/discover/web-series" : "https://movies.umairlab.com/discover/trending"
+        "item": isTV ? "https://movieslab.online/discover/web-series" : "https://movieslab.online/discover/trending"
       },
       {
         "@type": "ListItem",
         "position": 3,
         "name": title,
-        "item": `https://movies.umairlab.com/movie/${slug}`
+        "item": `https://movieslab.online/movie/${slug}`
       }
     ]
   };
@@ -243,7 +235,7 @@ export default async function Page({ params }) {
         "name": `Where can I watch ${title} (${year}) online for free?`,
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": `You can watch ${title} (${year}) online for free in HD 1080p on MovieLab. No registration or subscription required. Simply visit the MovieLab website and search for ${title} to start streaming instantly.`
+          "text": `You can watch ${title} (${year}) online for free in HD 1080p on Movieslab. No registration or subscription required.`
         }
       },
       {
@@ -251,15 +243,15 @@ export default async function Page({ params }) {
         "name": `Is ${title} available in HD quality?`,
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": `Yes, ${title} is available to stream in Full HD 1080p quality on MovieLab with English subtitles and fast buffering.`
+          "text": `Yes, ${title} is available to stream in Full HD 1080p quality on Movieslab.`
         }
       },
       {
         "@type": "Question",
-        "name": `Can I download ${title} for free?`,
+        "name": `Can I watch ${title} for free?`,
         "acceptedAnswer": {
           "@type": "Answer",
-          "text": `MovieLab offers free streaming of ${title} (${year}) in HD quality. You can watch online instantly without any downloads or sign-ups.`
+          "text": `Movieslab offers free streaming of ${title} (${year}) in HD quality. You can watch online instantly without any downloads or sign-ups.`
         }
       },
       {

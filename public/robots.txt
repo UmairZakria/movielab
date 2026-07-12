@@ -1,0 +1,25 @@
+User-agent: *
+Allow: /
+Allow: /movie/
+Disallow: /api/
+Disallow: /admin/
+Disallow: /watch/
+Disallow: /watch-later/
+Disallow: /search/
+Disallow: /history/
+Disallow: /login/
+Disallow: /_next/
+Disallow: /actors/
+Disallow: /actor/
+Disallow: /studio/
+Disallow: /discover/
+Disallow: /studios/
+Disallow: /countries/
+Disallow: /static.xml
+Disallow: /movies.xml
+Disallow: /webseries.xml
+Disallow: /actors.xml
+
+Crawl-delay: 1
+
+Sitemap: https://movieslab.online/sitemap.xml

@@ -20,10 +20,10 @@ async function getPopularActors() {
 }
 
 export const metadata = {
-  title: "Discover Popular Actors & Directors | MovieLab",
-  description: "Browse and discover popular actors, directors, producers, and writers on MovieLab. Explore their filmography, biography, and top movies.",
+  title: "Browse Popular Actors & Directors",
+  description: "Discover popular actors, directors, producers, and writers on Movieslab. Explore their filmography, biography, and top movies.",
   alternates: {
-    canonical: "https://movies.umairlab.com/actors",
+    canonical: "https://movieslab.online/actors",
   },
 };
 
@@ -44,14 +44,14 @@ export default async function Page() {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     "name": "Popular Actors & Directors",
-    "description": "Browse and discover popular actors, directors, producers, and writers on MovieLab.",
-    "url": "https://movies.umairlab.com/actors",
+    "description": "Browse and discover popular actors, directors, producers, and writers on Movieslab.",
+    "url": "https://movieslab.online/actors",
     "mainEntity": {
       "@type": "ItemList",
       "itemListElement": popularInitial.map((actor, i) => ({
         "@type": "ListItem",
         "position": i + 1,
-        "url": `https://movies.umairlab.com/actor/${actor.name.toLowerCase().replace(/ /g, "-")}-${actor.id}`,
+        "url": `https://movieslab.online/actor/${actor.name.toLowerCase().replace(/ /g, "-")}-${actor.id}`,
         "item": {
           "@type": "Person",
           "name": actor.name,

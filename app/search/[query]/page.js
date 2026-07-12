@@ -4,20 +4,20 @@ export async function generateMetadata({ params }) {
   const { query } = await params;
   const decodedQuery = decodeURIComponent(query);
 
-  const title = `Watch "${decodedQuery}" Free Online - Search Results | MovieLab`;
-  const description = `Stream "${decodedQuery}" in Full HD 1080p for free on MovieLab. Browse our library for "${decodedQuery}" movies and TV series with English subtitles.`;
+  const title = `Search "${decodedQuery}" - Movieslab`;
+  const description = `Search results for "${decodedQuery}" on Movieslab. Find movies and TV series to stream free in HD.`;
 
   return {
     title: title,
     description: description,
     alternates: {
-      canonical: `https://movies.umairlab.com/search/${query}`,
+      canonical: `https://movieslab.online/search/${query}`,
     },
     openGraph: {
       title: title,
       description: description,
-      url: `https://movies.umairlab.com/search/${query}`,
-      siteName: "MovieLab",
+      url: `https://movieslab.online/search/${query}`,
+      siteName: "Movieslab",
       type: "website",
     },
     twitter: {
@@ -26,7 +26,7 @@ export async function generateMetadata({ params }) {
       description: description,
     },
     robots: {
-      index: false, 
+      index: false,
       follow: true,
     },
   };

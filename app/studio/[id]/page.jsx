@@ -14,28 +14,28 @@ export async function generateMetadata({ params }) {
     const data = await res.json();
     const name = data.name || "Studio";
     return {
-      title: `${name} - Movies & TV Series | MovieLab`,
-      description: `Explore movies and TV shows produced by ${name}. Stream in HD 1080p for free on MovieLab.`,
+      title: `${name} - Movies & TV Series`,
+      description: `Explore movies and TV shows produced by ${name}. Stream in HD 1080p free on Movieslab.`,
       alternates: {
-        canonical: `https://movies.umairlab.com/studio/${id}`,
+        canonical: `https://movieslab.online/studio/${id}`,
       },
       openGraph: {
-        title: `${name} - Movies & TV Series | MovieLab`,
-        description: `Explore movies and TV shows produced by ${name}. Stream in HD 1080p for free on MovieLab.`,
-        url: `https://movies.umairlab.com/studio/${id}`,
-        siteName: "MovieLab",
+        title: `${name} - Movies & TV Series | Movieslab`,
+        description: `Explore movies and TV shows produced by ${name}. Stream in HD 1080p free on Movieslab.`,
+        url: `https://movieslab.online/studio/${id}`,
+        siteName: "Movieslab",
         type: "website",
       },
       twitter: {
         card: "summary_large_image",
-        title: `${name} - Movies & TV Series | MovieLab`,
-        description: `Explore movies and TV shows produced by ${name}. Stream in HD 1080p for free on MovieLab.`,
+        title: `${name} - Movies & TV Series | Movieslab`,
+        description: `Explore movies and TV shows produced by ${name}. Stream in HD 1080p free on Movieslab.`,
       },
     };
   } catch (error) {
     return {
-      title: "Studio Production | MovieLab",
-      description: "Explore movies and TV shows produced by this studio on MovieLab.",
+      title: "Studio Production | Movieslab",
+      description: "Explore movies and TV shows produced by this studio on Movieslab.",
     };
   }
 }

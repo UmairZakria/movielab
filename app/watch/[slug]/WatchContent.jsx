@@ -300,7 +300,7 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie", initialServe
     }
 
     if (server.id === "vidlink") {
-      // vidlink.pro endpoints with custom color themes matching MovieLab design (--color-primary: #2eafff, --color-secondary: #58b4ff)
+      // vidlink.pro endpoints with custom color themes matching Movieslab design (--color-primary: #2eafff, --color-secondary: #58b4ff)
       if (type === "tv") {
         return `${server.value}/tv/${mId}/${sea}/${epi}?primaryColor=2eafff&secondaryColor=58b4ff&iconColor=2eafff&icons=vid`;
       }
@@ -858,14 +858,14 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie", initialServe
     const rating = movie?.vote_average?.toFixed(1);
 
     const summaries = [
-      `Experience the thrill of ${title} (${year}), a standout ${genres} masterpiece that has captivated audiences globally. With a solid ${rating}/10 rating, it's a must-watch on MovieLab.`,
-      `Dive into the world of ${title}, where ${genres} elements blend perfectly to create an unforgettable cinematic journey. Now streaming in high definition for all MovieLab users.`,
+      `Experience the thrill of ${title} (${year}), a standout ${genres} masterpiece that has captivated audiences globally. With a solid ${rating}/10 rating, it's a must-watch on Movieslab.`,
+      `Dive into the world of ${title}, where ${genres} elements blend perfectly to create an unforgettable cinematic journey. Now streaming in high definition for all Movieslab users.`,
       `Looking for the best ${genres} content? ${title} (${year}) delivers an emotional and visual spectacle that ranks high among recent releases. Explore this gem on our platform today.`,
-      `MovieLab Review: ${title} is a brilliant addition to the ${genres} genre, offering deep storytelling and impressive visuals that earned it a ${rating} rating from fans worldwide.`,
+      `Movieslab Review: ${title} is a brilliant addition to the ${genres} genre, offering deep storytelling and impressive visuals that earned it a ${rating} rating from fans worldwide.`,
       `${title} (${year}) brings together powerful storytelling and engaging ${genres} moments that keep viewers hooked from start to finish. Rated ${rating}/10, it's definitely worth adding to your watchlist.`,
       `If you're a fan of ${genres} movies, ${title} is one film you shouldn't miss. Released in ${year}, it combines emotion, suspense, and stunning visuals into one memorable experience.`,
       `${title} stands out as one of the most talked-about ${genres} films of ${year}. With a strong audience rating of ${rating}, it continues to impress movie lovers worldwide.`,
-      `From gripping scenes to unforgettable performances, ${title} (${year}) delivers everything fans expect from a great ${genres} movie. Stream it now on MovieLab.`,
+      `From gripping scenes to unforgettable performances, ${title} (${year}) delivers everything fans expect from a great ${genres} movie. Stream it now on Movieslab.`,
       `${title} offers a refreshing take on the ${genres} genre, blending storytelling and cinematic visuals beautifully. No surprise it holds a ${rating}/10 rating among viewers.`,
       `Released in ${year}, ${title} captures the essence of great ${genres} filmmaking with compelling characters and an engaging storyline that keeps audiences invested.`,
       `Whether you're discovering it for the first time or rewatching a favorite, ${title} remains a strong pick for anyone who enjoys quality ${genres} entertainment.`,
@@ -896,7 +896,7 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie", initialServe
 
     narrative += `This ${year} ${genres} production ${studio ? `from ${studio}` : ""} brings a unique perspective to the screen. `;
     narrative +=
-      movie?.overview || "Explore the full details of this title on MovieLab.";
+      movie?.overview || "Explore the full details of this title on Movieslab.";
 
     if (movie?.status === "Planned" || movie?.status === "Post Production") {
       narrative += ` Currently in its ${movie.status.toLowerCase()} phase, anticipation continues to build for its full release.`;

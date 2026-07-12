@@ -43,58 +43,56 @@ export async function generateMetadata({ params }) {
       .map((actor) => actor.name)
       .join(", ");
 
-    const prefix = `Watch ${title} (${year})${director ? ` directed by ${director}` : ""} Full ${mediaType === "tv" ? "Series" : "Movie"} Online Live. `;
+    const prefix = `Watch ${title} (${year})${director ? ` directed by ${director}` : ""} online free. `;
     const storyBrief = overview ? `${overview.substring(0, 120)}... ` : "";
     const castInfo = topActors ? `Starring ${topActors}. ` : "";
-    const genreInfo = `Stream this ${genreNames} ${mediaType === "tv" ? "series" : "film"} with ${voteAverage.toFixed(1)}/10 rating from ${voteCount.toLocaleString()} votes. `;
-    const suffix = `Watch ${title} in HD 1080p on MovieLab (movieslab.io / movies umairlab) with zero ads, instant playback, and no registration. Streaming free now.`;
+    const genreInfo = `${genreNames} ${mediaType === "tv" ? "series" : "film"}, rated ${voteAverage.toFixed(1)}/10. `;
+    const suffix = `Stream in HD 1080p on Movieslab — no registration, no ads.`;
 
     let description = `${prefix}${storyBrief}${castInfo}${genreInfo}${suffix}`;
-    if (description.length > 320) {
-      description = description.substring(0, 317) + "...";
+    if (description.length > 200) {
+      description = description.substring(0, 197) + "...";
     }
 
     const titleStr = isTV
-      ? `Watch ${title} (${year}) Full TV Series Online Free HD | MovieLab`
-      : `Watch ${title} (${year}) Full Movie Free Online HD | MovieLab`;
+      ? `Watch ${title} (${year}) Full TV Series Free`
+      : `Watch ${title} (${year}) Full Movie Free`;
 
     return {
       title: titleStr,
       description: description,
       authors: director ? [director] : [],
-      creator: director || "MovieLab",
-      publisher: "MovieLab",
+      creator: director || "Movieslab",
+      publisher: "Movieslab",
       formatDetection: {
         email: false,
         address: false,
         telephone: false,
       },
-      metadataBase: new URL("https://movies.umairlab.com"),
       alternates: {
-        canonical: `https://movies.umairlab.com/movie/${slug}`,
+        canonical: `https://movieslab.online/movie/${slug}`,
       },
       openGraph: {
         title: titleStr,
         description: description,
-        url: `https://movies.umairlab.com/watch/${slug}`,
-        siteName: "MovieLab",
+        url: `https://movieslab.online/movie/${slug}`,
+        siteName: "Movieslab",
         images: [
           {
             url: `https://image.tmdb.org/t/p/original${backdrop}`,
             width: 1920,
             height: 1080,
-            alt: `Watch ${title} Full Movie Live Stream`,
+            alt: `${title} full movie backdrop`,
           },
           {
             url: `https://image.tmdb.org/t/p/w500${poster}`,
             width: 500,
             height: 750,
-            alt: `${title} Movie Poster`,
+            alt: `${title} movie poster`,
           },
         ],
-        type: isTV ? "video.episode" : "video.movie",
+        type: isTV ? "video.tv_show" : "video.movie",
         locale: "en_US",
-        countryName: "United States",
         videos: data.videos?.results?.find(
           (v) => v.type === "Trailer" && v.site === "YouTube",
         )
@@ -102,8 +100,8 @@ export async function generateMetadata({ params }) {
               {
                 url: `https://www.youtube.com/watch?v=${data.videos.results.find((v) => v.type === "Trailer" && v.site === "YouTube").key}`,
                 type: "text/html",
-                name: `${title} Official Trailer`,
-                description: `Watch the official trailer for ${title}`,
+                "name": `${title} Official Trailer`,
+                "description": `Watch the official trailer for ${title}`,
                 uploadDate: data.release_date || data.first_air_date,
               },
             ]
@@ -114,19 +112,17 @@ export async function generateMetadata({ params }) {
         title: titleStr,
         description: description,
         images: [`https://image.tmdb.org/t/p/original${backdrop}`],
-        creator: "@MovieLab",
-        site: "@MovieLab",
       },
       robots: {
-        index: false, // Disallowed pages should not be indexed, though we still support canonical fallback
+        index: false,
         follow: true,
       },
     };
   } catch (error) {
     return {
-      title: "Watch Movie | MovieLab - Watch Movies Online Free",
+      title: "Watch Movie Free | Movieslab",
       description:
-        "Watch movies and TV shows online for free on MovieLab. Stream in HD quality with no ads and instant playback.",
+        "Watch movies and TV shows online for free on Movieslab. Stream in HD quality with no ads.",
       robots: {
         index: false,
         follow: true,
@@ -161,8 +157,8 @@ export default async function Page({ params, searchParams }) {
     "description": initialData.overview || "",
     "thumbnailUrl": initialData.poster_path ? `https://image.tmdb.org/t/p/w500${initialData.poster_path}` : undefined,
     "uploadDate": initialData.release_date || initialData.first_air_date,
-    "contentUrl": `https://movies.umairlab.com/watch/${slug}`,
-    "embedUrl": `https://movies.umairlab.com/watch/${slug}`
+    "contentUrl": `https://movieslab.online/movie/${slug}`,
+    "embedUrl": `https://movieslab.online/watch/${slug}`
   } : null;
 
   const breadcrumbMarkup = {
@@ -173,19 +169,19 @@ export default async function Page({ params, searchParams }) {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://movies.umairlab.com"
+        "item": "https://movieslab.online"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": isTV ? "TV Series" : "Movies",
-        "item": isTV ? "https://movies.umairlab.com/discover/web-series" : "https://movies.umairlab.com/discover/trending"
+        "item": isTV ? "https://movieslab.online/discover/web-series" : "https://movieslab.online/discover/trending"
       },
       {
         "@type": "ListItem",
         "position": 3,
         "name": `Watch ${title}`,
-        "item": `https://movies.umairlab.com/watch/${slug}`
+        "item": `https://movieslab.online/watch/${slug}`
       }
     ]
   };

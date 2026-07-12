@@ -167,25 +167,25 @@ export async function generateMetadata({ params, searchParams }) {
   }
 
   const yearSuffix = year ? ` (${year})` : "";
-  const fullTitle = `Watch Best ${title}${yearSuffix} Online | ${topTitles ? `Featuring ${topTitles} | ` : ""}MovieLab`;
-  const description = `Explore our curated selection of ${title}${yearSuffix}. ${topTitles ? `Watch hits like ${topTitles} and more. ` : ""}Stream in HD 1080p, download for free with zero ads on MovieLab.`;
+  const fullTitle = `${title}${yearSuffix} - Watch Free on Movieslab`;
+  const description = `Browse the best ${title}${yearSuffix}. Stream in HD 1080p free on Movieslab — no ads, no registration.`;
 
   return {
     title: fullTitle,
     description,
     alternates: {
-      canonical: `https://movies.umairlab.com/discover/${slug}${year ? `?year=${year}` : ""}`,
+      canonical: `https://movieslab.online/discover/${slug}${year ? `?year=${year}` : ""}`,
     },
     openGraph: {
       title: fullTitle,
       description,
-      url: `https://movies.umairlab.com/discover/${slug}${year ? `?year=${year}` : ""}`,
-      siteName: "MovieLab",
+      url: `https://movieslab.online/discover/${slug}${year ? `?year=${year}` : ""}`,
+      siteName: "Movieslab",
       images: [{
-        url: "https://movies.umairlab.com/og-image.jpg",
+        url: "https://movieslab.online/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: `${title} - MovieLab`,
+        alt: `${title} - Movieslab`,
       }],
       type: "website",
       locale: "en_US",
@@ -194,7 +194,7 @@ export async function generateMetadata({ params, searchParams }) {
       card: "summary_large_image",
       title: fullTitle,
       description,
-      images: ["https://movies.umairlab.com/og-image.jpg"],
+      images: ["https://movieslab.online/og-image.jpg"],
     },
     robots: {
       index: true,
@@ -247,13 +247,13 @@ export default async function Page({ params, searchParams }) {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     "name": pageTitle,
-    "url": `https://movies.umairlab.com/discover/${slug}${year ? `?year=${year}` : ""}`,
+    "url": `https://movieslab.online/discover/${slug}${year ? `?year=${year}` : ""}`,
     "mainEntity": {
       "@type": "ItemList",
       "itemListElement": data.results.slice(0, 10).map((item, i) => ({
         "@type": "ListItem",
         "position": i + 1,
-        "url": `https://movies.umairlab.com/movie/${(item.title || item.name || "").toLowerCase().replace(/[^\w]+/g, "-").replace(/--+/g, "-").replace(/^-|-$/g, "")}-${item.id}`
+        "url": `https://movieslab.online/movie/${(item.title || item.name || "").toLowerCase().replace(/[^\w]+/g, "-").replace(/--+/g, "-").replace(/^-|-$/g, "")}-${item.id}`
       }))
     }
   } : null;
@@ -268,9 +268,10 @@ export default async function Page({ params, searchParams }) {
       )}
       <DiscoverContent
         slug={slug}
-        initialResults={[]}
+        initialResults={data.results || []}
         initialYear={year}
-        initialLastPage={0}
+        initialLastPage={data.total_pages || data.lastPageFetched || 0}
+        initialType={data.type || "all"}
       />
     </>
   );
