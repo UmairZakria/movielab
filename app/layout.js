@@ -167,6 +167,7 @@ export default function RootLayout({ children }) {
         />
 
         <MicrosoftClarity />
+        <GoogleAnalytics />
 
         <AdProvider>
         <AuthProvider>
