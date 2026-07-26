@@ -77,20 +77,14 @@ export async function generateMetadata({ params }) {
         description: description,
         url: `https://movieslab.online/movie/${slug}`,
         siteName: "Movieslab",
-        images: [
-          {
-            url: `https://image.tmdb.org/t/p/original${backdrop}`,
-            width: 1920,
-            height: 1080,
-            alt: `${title} full movie backdrop`,
-          },
-          {
-            url: `https://image.tmdb.org/t/p/w500${poster}`,
-            width: 500,
-            height: 750,
-            alt: `${title} movie poster`,
-          },
-        ],
+        // Backdrop (1920x1080) is the primary card image. The poster
+        // (500x750) is omitted because it fails the 600px minimum on
+        // some platforms and was causing blank previews.
+        images: backdrop
+          ? [{ url: `https://image.tmdb.org/t/p/original${backdrop}`, alt: `${title} backdrop` }]
+          : poster
+          ? [{ url: `https://image.tmdb.org/t/p/original${poster}`, alt: `${title} poster` }]
+          : [],
         type: isTV ? "video.tv_show" : "video.movie",
         locale: "en_US",
         videos: data.videos?.results?.find(

@@ -284,45 +284,51 @@ const EpisodePlaylist = ({
 const WatchContent = ({ initialData, slug, id, mediaType = "movie", initialServerId }) => {
   // 4. Server Verification Logic
   const constructServerUrl = (server, type, mId, sea, epi) => {
-    if (server.id === "vidking") {
-      // vidking endpoints as provided in instruction
+    const baseUrl = server.value.replace(/\/+$/, "");
+
+    if (server.id === "vidsrc_me") {
       if (type === "tv") {
-        return `${server.value}/embed/tv/${mId}/${sea}/${epi}?color=2eafff&autoPlay=true&nextEpisode=true&episodeSelector=true`;
+        return `${baseUrl}/embed/tv/${mId}/${sea}/${epi}`;
       }
-      return `${server.value}/embed/movie/${mId}?color=2eafff&autoPlay=true`;
+      return `${baseUrl}/embed/movie/${mId}`;
+    }
+
+    if (server.id === "vidking") {
+      if (type === "tv") {
+        return `${baseUrl}/embed/tv/${mId}/${sea}/${epi}?color=2eafff&autoPlay=true&nextEpisode=true&episodeSelector=true`;
+      }
+      return `${baseUrl}/embed/movie/${mId}?color=2eafff&autoPlay=true`;
     }
 
     if (server.id === "vidsrc_sbs") {
       if (type === "tv") {
-        return `${server.value}/tv/${mId}/${sea}/${epi}?color=58b4ff`;
+        return `${baseUrl}/tv/${mId}/${sea}/${epi}?color=58b4ff`;
       }
-      return `${server.value}/movie/${mId}?color=58b4ff`;
+      return `${baseUrl}/movie/${mId}?color=58b4ff`;
     }
 
     if (server.id === "vidlink") {
       // vidlink.pro endpoints with custom color themes matching Movieslab design (--color-primary: #2eafff, --color-secondary: #58b4ff)
       if (type === "tv") {
-        return `${server.value}/tv/${mId}/${sea}/${epi}?primaryColor=2eafff&secondaryColor=58b4ff&iconColor=2eafff&icons=vid`;
+        return `${baseUrl}/tv/${mId}/${sea}/${epi}?primaryColor=2eafff&secondaryColor=58b4ff&iconColor=2eafff&icons=vid`;
       }
-      return `${server.value}/movie/${mId}?primaryColor=2eafff&secondaryColor=58b4ff&iconColor=2eafff&icons=vid`;
+      return `${baseUrl}/movie/${mId}?primaryColor=2eafff&secondaryColor=58b4ff&iconColor=2eafff&icons=vid`;
     }
 
     if (server.id === "multiembed") {
       if (type === "tv") {
-        return `${server.value}?video_id=${mId}&tmdb=1&s=${sea}&e=${epi}`;
+        return `${baseUrl}/?video_id=${mId}&tmdb=1&s=${sea}&e=${epi}`;
       } else {
-        return `${server.value}?video_id=${mId}&tmdb=1`;
+        return `${baseUrl}/?video_id=${mId}&tmdb=1`;
       }
     }
     if (type === "tv") {
-      // if (server.id === "vidsrc_me")  return `${server.value}/tv/${mId}/${sea}/${epi}`;
       if (server.id === "2embed")
-        return `${server.value}/embedtv/${mId}&s=${sea}&e=${epi}`;
-      return `${server.value}/tv/${mId}/${sea}/${epi}`;
+        return `${baseUrl}/embedtv/${mId}&s=${sea}&e=${epi}`;
+      return `${baseUrl}/tv/${mId}/${sea}/${epi}`;
     } else {
-      // if (server.id === "vidsrc_me") return `${server.value}/movie/${mId}`;
-      if (server.id === "2embed") return `${server.value}/embed/${mId}`;
-      return `${server.value}/movie/${mId}`;
+      if (server.id === "2embed") return `${baseUrl}/embed/${mId}`;
+      return `${baseUrl}/movie/${mId}`;
     }
   };
 
@@ -337,10 +343,9 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie", initialServe
   // Server Switcher States
   const providers = [
     { name: "Server 1", value: "https://vidlink.pro", id: "vidlink" },
-    { name: "Server 2", value: "https://multiembed.mov/", id: "multiembed" },
-    { name: "Server 3", value: "https://vidking.net/", id: "vidking" },
+    { name: "Server 2", value: "https://multiembed.mov", id: "multiembed" },
+    { name: "Server 3", value: "https://www.vidking.net", id: "vidking" },
     { name: "Server 4", value: "https://vidsrc.sbs/embed", id: "vidsrc_sbs" },
-    // { name: "Server 5", value: "https://www.vidking.net", id: "server5" },
   ];
   const [selectedServer, setSelectedServer] = useState(() => {
     if (initialServerId) {
@@ -679,9 +684,10 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie", initialServe
           }
       }
 
+      let res = null;
       if (!newItems && endpoint) {
         // 1. Fetch from calculated endpoint (discover or recommendations)
-        const res = await axios.get(endpoint);
+        res = await axios.get(endpoint);
         newItems = res.data.results || [];
 
         // 2. If Page 1 and movie belongs to a collection, fetch that collection!
@@ -745,7 +751,7 @@ const WatchContent = ({ initialData, slug, id, mediaType = "movie", initialServe
         pageNum === 1 ? uniqueSafeResults : [...prev, ...uniqueSafeResults],
       );
 
-      if (res.data.page >= res.data.total_pages) {
+      if (res?.data && res.data.page >= res.data.total_pages) {
         if (activeTab === "all" && !isFallbackMode) {
           setIsFallbackMode(true);
           setRecPage(1);

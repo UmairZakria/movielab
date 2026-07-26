@@ -37,20 +37,18 @@ export const metadata = {
     address: false,
     telephone: false,
   },
+  // Root openGraph/twitter intentionally omit `images` so that every
+  // child page renders its own dynamic card backed by a TMDB absolute URL.
+  // Social crawlers (Facebook, Twitter, LinkedIn, WhatsApp, etc.) require
+  // absolute, hot-linkable image URLs at least 600px wide. We previously
+  // pointed at /og-image.jpg but that file was never created, so crawlers
+  // received a 404 and rendered a blank/white box.
   openGraph: {
     title: "Movieslab - Watch Free Movies & TV Series Online (HD)",
     description:
       "Stream trending movies and TV series for free in HD 1080p on Movieslab. No registration, daily updates, no ads.",
     url: "https://movieslab.online",
     siteName: "Movieslab",
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "Movieslab - Free HD Movie & TV Streaming",
-      },
-    ],
     locale: "en_US",
     type: "website",
   },
@@ -59,7 +57,6 @@ export const metadata = {
     title: "Movieslab - Watch Free Movies & TV Series Online (HD)",
     description:
       "Stream trending movies and TV series for free in HD 1080p on Movieslab. No registration required.",
-    images: ["/og-image.jpg"],
   },
   alternates: {
     canonical: "https://movieslab.online",

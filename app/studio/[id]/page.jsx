@@ -13,6 +13,12 @@ export async function generateMetadata({ params }) {
     if (!res.ok) throw new Error("Failed to fetch studio");
     const data = await res.json();
     const name = data.name || "Studio";
+    // TMDB absolute URL — use the studio's own logo if available so each
+    // studio page gets a relevant preview. Falls back to the root poster
+    // for the very small number of studios with no logo on TMDB.
+    const studioLogo = data.logo_path
+      ? `https://image.tmdb.org/t/p/original${data.logo_path}`
+      : null;
     return {
       title: `${name} - Movies & TV Series`,
       description: `Explore movies and TV shows produced by ${name}. Stream in HD 1080p free on Movieslab.`,
@@ -24,12 +30,14 @@ export async function generateMetadata({ params }) {
         description: `Explore movies and TV shows produced by ${name}. Stream in HD 1080p free on Movieslab.`,
         url: `https://movieslab.online/studio/${id}`,
         siteName: "Movieslab",
+        ...(studioLogo && { images: [{ url: studioLogo, alt: `${name} logo` }] }),
         type: "website",
       },
       twitter: {
         card: "summary_large_image",
         title: `${name} - Movies & TV Series | Movieslab`,
         description: `Explore movies and TV shows produced by ${name}. Stream in HD 1080p free on Movieslab.`,
+        ...(studioLogo && { images: [studioLogo] }),
       },
     };
   } catch (error) {

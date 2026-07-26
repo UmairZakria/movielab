@@ -26,6 +26,17 @@ export async function generateMetadata({ params }) {
 
     const description = `${name} is a ${department}. ${bio.substring(0, 200)}... Watch ${name}'s movies and series online free on Movieslab.`;
 
+    // TMDB absolute URLs. Primary image is the actor's profile photo
+    // (h500 path gives ~500x750 which is too small for some crawlers, so
+    // we upgrade to /original to satisfy the 600px minimum). Fallback
+    // is the actor's first known-for backdrop if no profile photo exists.
+    const primaryImageUrl = primaryImage
+      ? `https://image.tmdb.org/t/p/original${primaryImage}`
+      : null;
+    const fallbackImageUrl = data.combined_credits?.cast?.[0]?.backdrop_path
+      ? `https://image.tmdb.org/t/p/original${data.combined_credits.cast[0].backdrop_path}`
+      : null;
+
     return {
       title: `${name} - Movies & TV Series`,
       description,
@@ -37,19 +48,9 @@ export async function generateMetadata({ params }) {
         description,
         url: `https://movieslab.online/actor/${canonicalSlug}`,
         siteName: "Movieslab",
-        images: primaryImage
-          ? [{
-              url: `https://image.tmdb.org/t/p/w500${primaryImage}`,
-              width: 500,
-              height: 750,
-              alt: `${name} profile photo`,
-            }]
-          : [{
-              url: "https://movieslab.online/og-image.jpg",
-              width: 1200,
-              height: 630,
-              alt: "Movieslab - Free Movie Streaming",
-            }],
+        ...(primaryImageUrl || fallbackImageUrl
+          ? { images: [{ url: primaryImageUrl || fallbackImageUrl, alt: `${name} photo` }] }
+          : {}),
         type: "profile",
         locale: "en_US",
       },
@@ -57,7 +58,9 @@ export async function generateMetadata({ params }) {
         card: "summary_large_image",
         title: `${name} | Movieslab`,
         description,
-        images: primaryImage ? [`https://image.tmdb.org/t/p/w500${primaryImage}`] : [],
+        ...((primaryImageUrl || fallbackImageUrl)
+          ? { images: [primaryImageUrl || fallbackImageUrl] }
+          : {}),
       },
       robots: {
         index: true,

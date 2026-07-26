@@ -114,6 +114,18 @@ export async function generateMetadata({ params, searchParams }) {
     .map((m) => m.title || m.name)
     .join(", ");
 
+  // Pick a TMDB absolute image for the social card. Use the top result's
+  // backdrop if we have one; this gives every category its own relevant
+  // preview (Anime, Marvel Studios, Bollywood, etc.) and never 404s
+  // because we just got the path from the same TMDB call. Fall back to
+  // the result's poster if no backdrop is available.
+  const topResult = data.results?.[0];
+  const tmdbImage = topResult?.backdrop_path
+    ? `https://image.tmdb.org/t/p/original${topResult.backdrop_path}`
+    : topResult?.poster_path
+    ? `https://image.tmdb.org/t/p/original${topResult.poster_path}`
+    : null;
+
   let title = "Discover Movies";
   const capitals = {
     hollywood: "Hollywood",
@@ -181,12 +193,12 @@ export async function generateMetadata({ params, searchParams }) {
       description,
       url: `https://movieslab.online/discover/${slug}${year ? `?year=${year}` : ""}`,
       siteName: "Movieslab",
-      images: [{
-        url: "https://movieslab.online/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: `${title} - Movieslab`,
-      }],
+      ...(tmdbImage && {
+        images: [{
+          url: tmdbImage,
+          alt: `${title} - Movieslab`,
+        }],
+      }),
       type: "website",
       locale: "en_US",
     },
@@ -194,7 +206,7 @@ export async function generateMetadata({ params, searchParams }) {
       card: "summary_large_image",
       title: fullTitle,
       description,
-      images: ["https://movieslab.online/og-image.jpg"],
+      ...(tmdbImage && { images: [tmdbImage] }),
     },
     robots: {
       index: true,
