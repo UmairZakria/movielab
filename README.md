@@ -1,5 +1,7 @@
 # 🎬 MovieLab
 
+![Alternative Text](/stats.png)
+
 Movie discovery and streaming platform. Browse trending movies and TV shows, view details, and watch via third-party embed providers. Built with **Next.js 16 (App Router)**, **React 19**, and **Tailwind CSS v4**.
 
 ## Features
